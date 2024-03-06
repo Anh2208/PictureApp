@@ -8,10 +8,33 @@
     --color-red-pushpin-450: #e60023;
 }
 
+@layer utilities {
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+}
+
+
 .Il7 {
     background-color: var(--color-background-primary-base);
 }
 
 .a_A {
     background-color: var(--color-background-button-secondary-default);
+}
+
+element.style {
+    font-size: 60px;
+    color: rgb(195, 25, 82);
+    font-weight: bold;
 }
