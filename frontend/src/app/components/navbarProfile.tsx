@@ -9,7 +9,7 @@ const NavbarProfile = () => {
 
   console.log(pathName);
   return (
-    <div className="col-span-3">
+    <div className="col-span-3 ">
       <ul className="gap-3 mt-9 ml-3">
         {links.map((link) => (
           <li key={link.title} className="text-md font-medium mb-6">

@@ -3,12 +3,14 @@ import NavbarProfile from "@/app/components/navbarProfile";
 
 const EditProfile = () => {
   return (
-    <div className="container grid grid-cols-12 p-3 h-[1000px]">
+    <div className="container grid grid-cols-12 p-3 h-[1000px] pt-[80px]">
       <NavbarProfile />
 
       <div className="col-span-9">
         <div className="mt-9">
-          <h1 className="text-wrap font-medium text-3xl">Chỉnh sửa hồ sơ</h1>
+          <h1 className="text-wrap font-medium text-[28px] iFc">
+            Chỉnh sửa hồ sơ
+          </h1>
         </div>
         <div className="w-[500px] mt-3 font-sans">
           Hãy giữ riêng tư thông tin cá nhân của bạn. Thông tin bạn thêm vào đây

@@ -4,7 +4,7 @@ import NavbarProfile from "../../components/navbarProfile";
 
 const Account_Settings = () => {
   return (
-    <div className="container grid grid-cols-12 p-3 h-[1000px]">
+    <div className="container grid grid-cols-12 p-3 h-[1000px] pt-[80px]">
       <NavbarProfile />
 
       <div className="col-span-9">
