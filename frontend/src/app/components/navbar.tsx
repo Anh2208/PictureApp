@@ -8,7 +8,17 @@ import NavLink from "./navLink";
 
 const links = [
   { url: "/", title: "Trang chủ" },
-  { url: "/create", title: "Tạo ảnh" },
+  { url: "/create", title: "Tạo" },
+];
+
+const images = [
+  { link: "https://www.facebook.com/", url: "/facebook.png", alt: "facebook" },
+  { link: "https://github.com/", url: "/github.png", alt: "github" },
+  {
+    link: "https://www.instagram.com/",
+    url: "/instagram.png",
+    alt: "instagram",
+  },
 ];
 
 const Navbar = () => {
@@ -69,12 +79,43 @@ const Navbar = () => {
   };
 
   return (
-    <div className="h-full flex items-center justify-between px-4 sm:px-8 md:px-12 lg:px-20 xl:px-48 text-xl">
+    // <div className="h-full flex items-center justify-between p-4 sm:px-8 md:px-12 lg:px-20 xl:px-48 text-xl">
+    <div className="h-full flex items-center justify-between p-4 text-xl">
       {/* Links */}
-      <div className="hidden md:flex gap-4 w-1/3">
-        {links.map((link) => (
-          <NavLink link={link} key={link.title} />
-        ))}
+      <div className="hidden md:flex gap-0 w-1/3">
+        <div className="cursor-pointer items-center justify-center flex">
+          <a href="/">
+            <div className="items-center justify-center px-3 flex flex-row">
+              <img src="/logo-picbu.png" alt="logo" className="w-10 h-10" />
+              <div className="tracking-tight ml-1">
+                <h1 className="items-start sOY font-semibold text-xl">PicBu</h1>
+              </div>
+            </div>
+          </a>
+        </div>
+        {isLogged ? (
+          <>
+            {links.map((link) => (
+              <NavLink link={link} key={link.title} />
+            ))}
+          </>
+        ) : (
+          <div className="items-center flex flex-row ">
+            <div className="py-[8px]">
+              <a href="#" className="cursor-pointer rounded-lg">
+                <div className="items-center flex flex-col">
+                  <div className=" rounded-lg relative p-2">
+                    <div className="flex flex-row px-[-4px] justify-center items-center">
+                      <div className="px-[4px] text-black font-semibold text-[16px] rounded-lg py-1 hover:bg-customColor-color_background_button_secondary_default">
+                        Khám phá
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        )}
       </div>
       {/* Search */}
       <div className="md:hidden lg:flex xl:w-1/3 xl:justify-center">
@@ -89,6 +130,11 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="hidden md:flex justify-center gap-4 w-1/3 relative">
+        {images.map((image) => (
+          <Link href={image.link} key={image.url}>
+            <Image src={image.url} alt={image.alt} width={40} height={40} />
+          </Link>
+        ))}
         {/* not logged in yet */}
         <div className="mr-[8px]">
           <button className="min-w-[60px] cursor-pointer">

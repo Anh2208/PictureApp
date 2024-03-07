@@ -18,11 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="w-screen h-screen bg-gradient-to-b from-blue-50 to-green-100">
-          <div className="h-20">
+        <div className="w-screen h-screen">
+          <div className="h-20 z-50 fixed top-0 w-full bg-white">
             <Navbar />
           </div>
-          <div className="h-[calc(100vh-5rem)]">{children}</div>
+          <div className="left-0 top-0 absolute w-full">{children}</div>
         </div>
       </body>
     </html>
