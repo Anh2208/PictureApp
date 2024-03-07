@@ -6,6 +6,8 @@
     --color-background-primary-base: var(--color-red-pushpin-450);
     --color-background-button-secondary-default: #e9e9e9;
     --color-red-pushpin-450: #e60023;
+    --color-text-error: #cc0000;
+    --font-family-default-latin: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", Arial, sans-serif
 }
 
 @layer utilities {
@@ -22,8 +24,11 @@
         scrollbar-width: none;
         /* Firefox */
     }
-}
 
+    .font-default {
+        font-family: var(--font-family-default-latin);
+    }
+}
 
 .Il7 {
     background-color: var(--color-background-primary-base);
@@ -33,8 +38,11 @@
     background-color: var(--color-background-button-secondary-default);
 }
 
-element.style {
-    font-size: 60px;
-    color: rgb(195, 25, 82);
-    font-weight: bold;
+.sOY {
+    color: var(--color-text-error);
+}
+
+.iFc {
+    @apply font-default;
+    /* Sử dụng lớp utility font-family */
 }
