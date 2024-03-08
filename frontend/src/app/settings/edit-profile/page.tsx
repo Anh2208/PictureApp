@@ -84,7 +84,7 @@ const EditProfile = () => {
       </div>
       <div className="fixed bg-slate-50 w-full bottom-0 p-3 left-0 right-0">
         <div className="flex items-center justify-center">
-          <p className="bg-gray-200 p-4 text-slate-500 font-medium rounded-[25px] cursor-pointer">
+          <p className="bg-customColor-color_background_button_secondary_default p-4 text-slate-500 font-medium rounded-[25px] cursor-pointer">
             Thiết lập lại
           </p>
           <p className="bg-gray-200 p-4 text-slate-500 font-medium rounded-[25px] ml-[20px] cursor-pointer">
