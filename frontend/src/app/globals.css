@@ -15,6 +15,7 @@
 }
 
 @layer utilities {
+
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -28,6 +29,27 @@
     /* Firefox */
   }
 
+  @keyframes bouncing-arrow {
+    0% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+
+  /* animation */
+  .bouncing-arrow {
+    animation: bouncing-arrow 2s ease-in-out infinite;
+  }
+
+  /* css */
   .font-default {
     font-family: var(--font-family-default-latin);
   }
@@ -50,15 +72,31 @@
   /* Sử dụng lớp utility font-family */
 }
 
+.CRJ {
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* animation */
 .b_shadow {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
-.toggle-checkbox:checked + .toggle-label .toggle-inner {
-  background-color: black; /* Màu nền của thanh gạt khi được chọn */
+.toggle-checkbox:checked+.toggle-label .toggle-inner {
+  background-color: black;
+  /* Màu nền của thanh gạt khi được chọn */
 }
 
-.toggle-checkbox:checked + .toggle-label .toggle-circle {
-  transform: translateX(20px); /* Di chuyển hình tròn khi được chọn */
-  background-color: #ffffff; /* Màu nền của hình tròn khi được chọn */
+.toggle-checkbox:checked+.toggle-label .toggle-circle {
+  transform: translateX(20px);
+  /* Di chuyển hình tròn khi được chọn */
+  background-color: #ffffff;
+  /* Màu nền của hình tròn khi được chọn */
 }
