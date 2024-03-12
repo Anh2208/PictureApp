@@ -4,7 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import NavLink from "./navLink";
+// import NavLink from "./navLink";
+import Login from "./login";
+import Register from "./register";
+import Message from "./message";
 
 const links = [
   { url: "/", title: "Trang chủ" },
@@ -24,7 +27,15 @@ const images = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [notification, setNotification] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
   const isLogged = false;
+
+  const SwicthAction = () => {
+    setShowLogin(!showLogin);
+    setShowRegister(!showRegister);
+  };
 
   const topVariants = {
     closed: {
@@ -87,17 +98,43 @@ const Navbar = () => {
           <a href="/">
             <div className="items-center justify-center px-3 flex flex-row">
               <img src="/logo-picbu.png" alt="logo" className="w-10 h-10" />
-              <div className="tracking-tight ml-1">
-                <h1 className="items-start sOY font-semibold text-xl">PicBu</h1>
-              </div>
+              {!isLogged && (
+                <div className="tracking-tight ml-1">
+                  <h1 className="items-start sOY font-semibold text-xl">
+                    PicBu
+                  </h1>
+                </div>
+              )}
             </div>
           </a>
         </div>
         {isLogged ? (
           <>
-            {links.map((link) => (
-              <NavLink link={link} key={link.title} />
-            ))}
+            <div className="h-[48px] min-w-[60px] rounded-[24px]">
+              <a href="/" className="rounded-[24px] w-full cursor-pointer">
+                <div className="h-[48px] min-w-[60px] rounded-[24px] whitespace-nowrap px-4 bg-black">
+                  <div className="h-full justify-center items-center flex flex-row m-0">
+                    <span className="text-white text-center font-semibold text-[16px] iFc">
+                      Trang chủ
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <div className="h-[48px] min-w-[60px] rounded-[24px]">
+              <a
+                href="/create"
+                className="rounded-[24px] w-full cursor-pointer"
+              >
+                <div className="h-[48px] min-w-[60px] rounded-[24px] whitespace-nowrap px-4 bg-white">
+                  <div className="h-full justify-center items-center flex flex-row m-0">
+                    <span className="text-center font-semibold text-[16px] iFc">
+                      Tạo
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
           </>
         ) : (
           <div className="items-center flex flex-row ">
@@ -131,60 +168,106 @@ const Navbar = () => {
       </div>
       <div className="hidden md:flex justify-center gap-4 w-1/3 relative">
         {images.map((image) => (
-          <Link href={image.link} key={image.url}>
+          <Link
+            href={image.link}
+            key={image.url}
+            className="sm:hidden xl:block"
+          >
             <Image src={image.url} alt={image.alt} width={40} height={40} />
           </Link>
         ))}
-        {/* not logged in yet */}
-        <div className="mr-[8px]">
-          <button className="min-w-[60px] cursor-pointer">
-            <div className="Il7 min-h-[40px] rounded-3xl px-[12px] py-[8px] w-full cursor-pointer hover:bg-red-700">
-              <div className="text-center font-semibold text-[16px] text-white">
-                Đăng nhập
-              </div>
-            </div>
-          </button>
-        </div>
-        <div className="justify-center text-center flex">
-          <button className="min-w-[60px] cursor-pointer ">
-            <div className="a_A min-w-[60px] rounded-3xl min-h-[40px] justify-center text-center flex px-[12px] py-[8px] cursor-pointer">
-              <div className="text-center font-semibold text-[16px] text-black">
-                Đăng ký
-              </div>
-            </div>
-          </button>
-        </div>
         {/* logged */}
-        {isLogged && (
+        {isLogged ? (
           <>
-            <Image
-              src="/notification.svg"
-              alt=""
-              width={24}
-              height={24}
-              onClick={() => setNotification((prev) => !prev)}
-            />
-            {notification && (
-              <div className="absolute right-0 top-10 mt-2 min-w-[360px] max-w-[375px] bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="px-4 py-2">
-                  <h1 className="text-center font-semibold">Cập nhật</h1>
+            <div className="items-center flex flex-row">
+              <div className="relative block">
+                <div className="h-[48px] w-[48px] rounded-[50%] justify-center items-center flex flex-row cursor-pointer">
+                  <Image
+                    src="/notification.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    onClick={() => setNotification((prev) => !prev)}
+                  />
+                  {notification && (
+                    <div className="absolute right-0 top-10 mt-2 min-w-[360px] max-w-[375px] bg-white rounded-lg shadow-md overflow-hidden">
+                      <div className="px-4 py-2">
+                        <h1 className="text-center font-semibold">Cập nhật</h1>
+                      </div>
+                      <div className="justify-center flex py-2 px-4">
+                        <img src="/notification.png" alt="" />
+                      </div>
+                      <div className="py-2 px-4">
+                        <h3 className="text-center font-semibold">
+                          Chưa có gì để xem
+                        </h3>
+                      </div>
+                      <div className="py-2 px-4">
+                        <div className="text-center text-sm">
+                          Hãy thử khám phá bảng tin nhà, tạo bảng hoặc theo dõi
+                          ai đó với những ý tưởng truyền cảm hứng cho bạn.
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="justify-center flex py-2 px-4">
-                  <img src="/notification.png" alt="" />
-                </div>
-                <div className="py-2 px-4">
-                  <h3 className="text-center font-semibold">
-                    Chưa có gì để xem
-                  </h3>
-                </div>
-                <div className="py-2 px-4">
-                  <div className="text-center text-sm">
-                    Hãy thử khám phá bảng tin nhà, tạo bảng hoặc theo dõi ai đó
-                    với những ý tưởng truyền cảm hứng cho bạn.
+              </div>
+              <div className="block relative">
+                <div
+                  className="rounded-[50%] w-full cursor-pointer"
+                  onClick={() => setShowMessage((prev) => !prev)}
+                >
+                  <div className="h-[48px] w-[48px] rounded-[50%] flex flex-row justify-center items-center">
+                    {showMessage == false ? (
+                      <div className="relative">
+                        <img
+                          src="/icons8-message-100.png"
+                          alt="message"
+                          className="h-[24px] w-[24px] rounded-[50%] "
+                        />
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <img
+                          src="/icons8-chat-bubble-100.png"
+                          alt="message"
+                          className="h-[24px] w-[24px] rounded-[50%] "
+                        />
+                        <Message />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          </>
+        ) : (
+          // not logged in yet
+          <>
+            <div className="mr-[8px]">
+              <button
+                className="min-w-[60px] cursor-pointer"
+                onClick={() => setShowLogin(true)}
+              >
+                <div className="Il7 min-h-[40px] rounded-3xl px-[12px] py-[8px] w-full cursor-pointer hover:bg-red-700">
+                  <div className="text-center font-semibold text-[16px] text-white">
+                    Đăng nhập
+                  </div>
+                </div>
+              </button>
+            </div>
+            <div className="justify-center text-center flex">
+              <button
+                className="min-w-[60px] cursor-pointer"
+                onClick={() => setShowRegister(true)}
+              >
+                <div className="a_A min-w-[60px] rounded-3xl min-h-[40px] justify-center text-center flex px-[12px] py-[8px] cursor-pointer">
+                  <div className="text-center font-semibold text-[16px] text-black">
+                    Đăng ký
+                  </div>
+                </div>
+              </button>
+            </div>
           </>
         )}
       </div>
@@ -233,6 +316,18 @@ const Navbar = () => {
           </motion.div>
         )}
       </div>
+      {showLogin && (
+        <Login
+          onClose={() => setShowLogin(false)}
+          Register={() => SwicthAction()}
+        />
+      )}
+      {showRegister && (
+        <Register
+          onClose={() => setShowRegister(false)}
+          Login={() => SwicthAction()}
+        />
+      )}
     </div>
   );
 };

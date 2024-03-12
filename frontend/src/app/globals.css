@@ -29,6 +29,11 @@
     /* Firefox */
   }
 
+  .shadow-custom {
+    box-shadow: rgba(0, 0, 0, 0.1) -3px 4px 14px 0px;
+  }
+
+
   @keyframes bouncing-arrow {
     0% {
       transform: translateY(0);
@@ -83,6 +88,24 @@
   white-space: nowrap;
   width: 1px;
 }
+
+.XgI {
+  border-width: 2px;
+}
+
+.Lfz {
+  border-radius: 999px;
+
+}
+
+.LJB {
+  border-color: #cdcdcd;
+}
+
+.KI_ {
+  border: 1px solid #cdcdcd;
+}
+
 
 /* animation */
 .b_shadow {

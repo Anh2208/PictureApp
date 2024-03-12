@@ -8,13 +8,13 @@ import {
 import { FaPlus } from "react-icons/fa";
 
 const CreatePage = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
   return (
-    <div className="grid grid-cols-12 border-2">
+    <div className="grid grid-cols-12 border-2 mt-[100px]">
       {isOpen ? (
         <div className="col-span-3 p-2">
           <div className="p-1">
