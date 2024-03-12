@@ -16,25 +16,25 @@ const NavbarProfile = () => {
   console.log(pathName);
   return (
     <div className=" col-span-3">
-      <ul className=" mt-9 ml-3 ">
+      <div className=" mt-9 ml-3 ">
         {links.map((link) => (
-          <li key={link.title} className="text-md text-start font-medium mb-6 ">
-            <Link
-              className={`${
-                (pathName === link.url ||
-                  (link.url === "/settings/edit-profile" &&
-                    pathName === "/settings")) &&
-                "underline underline-offset-8 decoration-2"
-              } p-2`}
-              href={link.url}
-            >
-              <span className="hover:bg-slate-100 rounded-md cursor-pointer  max-w-[200px] p-3">
+          <div
+            key={link.title}
+            className={`${
+              (pathName === link.url ||
+                (link.url === "/settings/edit-profile" &&
+                  pathName === "/settings")) &&
+              "relative underline underline-offset-8 decoration-2"
+            } p-2 text-md text-start font-medium max-w-[200px]`}
+          >
+            <Link href={link.url}>
+              <div className="hover:bg-slate-100 rounded-md cursor-pointer p-3">
                 {link.title}
-              </span>
+              </div>
             </Link>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
