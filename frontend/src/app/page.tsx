@@ -297,167 +297,30 @@ export default function Home() {
               <div className="h-full w-[1750px] relative mt-6">
                 <div className="top-[20%] left-auto right-auto w-[1750px] absolute flex flex-row">
                   {image_01.map((list) => (
-                    <div className="w-[calc(3/12*100%)]">
-                      <div className={list.margin} key={list.number}>
-                        {list.array.map((image) => (
-                          <div
-                            className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
-                            key={image.number}
-                          >
-                            <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
-                              <div className="h-full relative">
-                                <img
-                                  src={image.url}
-                                  alt={image.alt}
-                                  className="absolute object-cover block w-full h-full"
-                                />
-                              </div>
+                    <div
+                      className={`w-[calc(3/12*100%)] ${list.margin}`}
+                      key={list.number}
+                    >
+                      {/* <div className={list.margin} key={list.number}> */}
+                      {list.array.map((image) => (
+                        <div
+                          className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
+                          key={image.number}
+                        >
+                          <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
+                            <div className="h-full relative">
+                              <img
+                                src={image.url}
+                                alt={image.alt}
+                                className="absolute object-cover block w-full h-full"
+                              />
                             </div>
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      ))}
+                      {/* </div> */}
                     </div>
                   ))}
-                  {/* <div className="w-[calc(3/12*100%)]">
-                    <div className="mt-0">
-                      {images_col1.map((image) => (
-                        <div
-                          className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
-                          key={image.number}
-                        >
-                          <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
-                            <div className="h-full relative">
-                              <img
-                                src={image.url}
-                                alt={image.alt}
-                                className="absolute object-cover block w-full h-full"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="w-[calc(3/12*100%)]">
-                    <div className="mt-[160px]">
-                      {images_col2.map((image) => (
-                        <div
-                          className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
-                          key={image.number}
-                        >
-                          <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
-                            <div className="h-full relative">
-                              <img
-                                src={image.url}
-                                alt={image.alt}
-                                className="absolute object-cover block w-full h-full"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="w-[calc(3/12*100%)]">
-                    <div className="mt-[240px]">
-                      {images_col3.map((image) => (
-                        <div
-                          className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
-                          key={image.number}
-                        >
-                          <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
-                            <div className="h-full relative">
-                              <img
-                                src={image.url}
-                                alt={image.alt}
-                                className="absolute object-cover block w-full h-full"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="w-[calc(3/12*100%)]">
-                    <div className="mt-[400px]">
-                      {images_col4.map((image) => (
-                        <div
-                          className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
-                          key={image.number}
-                        >
-                          <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
-                            <div className="h-full relative">
-                              <img
-                                src={image.url}
-                                alt={image.alt}
-                                className="absolute object-cover block w-full h-full"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="w-[calc(3/12*100%)]">
-                    <div className="mt-[240px]">
-                      {images_col5.map((image) => (
-                        <div
-                          className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
-                          key={image.number}
-                        >
-                          <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
-                            <div className="h-full relative">
-                              <img
-                                src={image.url}
-                                alt={image.alt}
-                                className="absolute object-cover block w-full h-full"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="w-[calc(3/12*100%)]">
-                    <div className="mt-[160px]">
-                      {images_col6.map((image) => (
-                        <div
-                          className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
-                          key={image.number}
-                        >
-                          <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
-                            <div className="h-full relative">
-                              <img
-                                src={image.url}
-                                alt={image.alt}
-                                className="absolute object-cover block w-full h-full"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="w-[calc(3/12*100%)]">
-                    <div className="mt-0">
-                      {images_col7.map((image) => (
-                        <div
-                          className="animate-translate-y opacity-1 object-cover overflow-visible transform translate-y-[-40px]"
-                          key={image.number}
-                        >
-                          <div className="h-[350px] w-[236px] mx-2 my-4 rounded-[16px] relative overflow-hidden">
-                            <div className="h-full relative">
-                              <img
-                                src={image.url}
-                                alt={image.alt}
-                                className="absolute object-cover block w-full h-full"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div> */}
                 </div>
               </div>
             </div>
@@ -1220,7 +1083,9 @@ export default function Home() {
                                   <input
                                     type="email"
                                     name="email"
+                                    id="email"
                                     placeholder="Email"
+                                    autoComplete="email"
                                     className="px-4 py-3 rounded-2xl text-[16px] border-2 border-customColor-color_border_container w-full iFc"
                                   />
                                 </div>
@@ -1239,6 +1104,7 @@ export default function Home() {
                                     <div className="text-center relative">
                                       <input
                                         type="password"
+                                        id="password"
                                         name="password"
                                         placeholder="Tạo mật khẩu"
                                         className="py-3 pl-4 pr-8 justify-center items-center rounded-2xl text-[16px] border-2 border-customColor-color_border_container w-full iFc"
@@ -1303,6 +1169,7 @@ export default function Home() {
                                         <input
                                           type="date"
                                           name="date"
+                                          id="date"
                                           className="rounded-2xl py-3 px-4 text-[16px] border-2 border-customColor-color_border_container min-h-[48px] w-full"
                                         />
                                       </div>

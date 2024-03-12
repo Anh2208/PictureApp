@@ -33,6 +33,7 @@ const config: Config = {
           color_background_box_secondary: "#e9e9e9",
           color_border_container: "#cdcdcd",
           color_red_pushpin_450: "#e60023",
+          color_text_subtle: "#767676",
           400: "#9ca3af",
           500: "#6b7280",
           600: "#4b5563",
