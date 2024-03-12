@@ -1,5 +1,6 @@
 "use client";
 import NavbarProfile from "@/app/components/navbarProfile";
+import { FaQuestion } from "react-icons/fa";
 
 const EditProfile = () => {
   return (
@@ -82,14 +83,19 @@ const EditProfile = () => {
           </div>
         </form>
       </div>
-      <div className="fixed bg-slate-50 w-full bottom-0 p-3 left-0 right-0">
-        <div className="flex items-center justify-center">
-          <p className="bg-customColor-color_background_button_secondary_default p-4 text-slate-500 font-medium rounded-[25px] cursor-pointer">
-            Thiết lập lại
-          </p>
-          <p className="bg-gray-200 p-4 text-slate-500 font-medium rounded-[25px] ml-[20px] cursor-pointer">
-            Lưu
-          </p>
+      <div className="w-full fixed bg-slate-50 bottom-0 p-3 left-0 right-0 b_shadow">
+        <div className="justify-center items-center content-center">
+          <div className="flex justify-center">
+            <p className="bg-customColor-color_background_button_secondary_default text-center p-4 text-slate-500 font-medium rounded-[25px] cursor-pointer">
+              Thiết lập lại
+            </p>
+            <p className="bg-customColor-color_background_button_secondary_default text-center  p-4 text-slate-500 font-medium rounded-[25px] ml-[20px] cursor-pointer">
+              Lưu
+            </p>
+            <div className="w-14 h-14 ">
+              <FaQuestion className="hover:bg-[#e9e9e9] shadow-lg cursor-pointer w-14 h-14 p-3 rounded-full absolute right-1 top-1/2 transform -translate-y-1/2 " />
+            </div>
+          </div>
         </div>
       </div>
     </div>

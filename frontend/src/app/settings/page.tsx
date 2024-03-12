@@ -4,7 +4,7 @@ import NavbarProfile from "../components/navbarProfile";
 
 const Settings = () => {
   return (
-    <div className="container grid grid-cols-12 p-3 h-[1000px] pt-[80px]">
+    <div className="grid grid-cols-12 p-3 h-[1000px] pt-[80px] overflow-x-hidden">
       <NavbarProfile />
 
       <div className="col-span-9">
