@@ -1,4 +1,6 @@
 "use client";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface LoginProps {
@@ -9,7 +11,6 @@ interface LoginProps {
 const Login = ({ onClose, Register }: LoginProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const formRef = useRef<HTMLDivElement>(null); // Sử dụng HTMLDivElement cho formRef
-
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (formRef.current && !formRef.current.contains(event.target as Node)) {
@@ -167,14 +168,20 @@ const Login = ({ onClose, Register }: LoginProps) => {
                 <div className="relative block">
                   <div className="h-[44px]">
                     <div className="h-full absolute">
-                      <div className="relative">
-                        <iframe
-                          src=""
-                          title="Đăng nhập bằng Google"
-                          className="block relative top-0 left-0 h-[44px] w-[288px] my-[-2px] mx-[-10px] p-0"
-                        >
-                          Đăng nhập bằng Google
-                        </iframe>
+                      <div
+                        className="relative flex flex-row justify-center items-center border border-gray-200 rounded-[32px] w-[268px] cursor-pointer"
+                        onClick={() => signIn("google")}
+                      >
+                        <div className="w-[48px] h-[48px] justify-center items-center flex">
+                          <img
+                            src="/icons8-google-96.png"
+                            alt="gg"
+                            className="h-[24px] w-[24px]"
+                          />
+                        </div>
+                        <div className="iFc text-[16px] w-full font-semibold">
+                          Đăng nhập với google
+                        </div>
                       </div>
                     </div>
                   </div>

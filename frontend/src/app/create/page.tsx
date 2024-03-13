@@ -1,17 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaPlus } from "react-icons/fa";
 import {
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
-import { FaPlus } from "react-icons/fa";
 
 const CreatePage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+  const [loading, setLoading] = useState(true); // Thêm state 'loading'
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Kiểm tra nếu session đã được load và có giá trị
+    if (session) {
+      setLoading(false); // Đã load xong, không còn loading nữa
+    }
+    if (session == null) {
+      router.push("/");
+    }
+    console.log(session);
+  }, [session]); // Chạy useEffect mỗi khi session thay đổi
+
+  // Nếu đang loading hoặc chưa có session, không hiển thị gì cả
+  if (loading || !session) {
+    return null; // Hoặc có thể trả về một spinner hoặc thông báo loading
+  }
 
   return (
     <div className="grid grid-cols-12 border-2">
