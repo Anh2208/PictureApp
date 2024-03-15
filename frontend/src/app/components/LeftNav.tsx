@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/react";
 import NavLink from "./navLink";
+import Link from "next/link";
 
 const links = [
   { url: "/", title: "Trang chủ" },
@@ -17,10 +18,7 @@ const LeftNav = () => {
               key={link.url}
               className="h-[48px] min-w-[60px] rounded-[24px]"
             >
-              <a
-                href={link.url}
-                className="rounded-[24px] w-full cursor-pointer"
-              >
+              <div className="rounded-[24px] w-full cursor-pointer">
                 <div className="h-[48px] min-w-[60px] rounded-[24px] whitespace-nowrap px-4">
                   <div className="h-full justify-center items-center flex flex-row m-0">
                     <span className="text-center font-semibold text-[16px] iFc">
@@ -28,7 +26,7 @@ const LeftNav = () => {
                     </span>
                   </div>
                 </div>
-              </a>
+              </div>
             </div>
           ))}
         </>

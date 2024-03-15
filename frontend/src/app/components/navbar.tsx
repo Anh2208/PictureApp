@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import UserLinks from "./userLinks";
 import LeftNav from "./LeftNav";
+import { useSession } from "next-auth/react";
 
 const links = [
   { url: "/", title: "Trang chủ" },
@@ -28,10 +29,15 @@ const Navbar = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [logged, setLogged] = useState(false);
 
-  const SwicthAction = () => {
-    setShowLogin(!showLogin);
-    setShowRegister(!showRegister);
-  };
+  // const SwicthAction = () => {
+  //   setShowLogin(!showLogin);
+  //   setShowRegister(!showRegister);
+  // };
+  const { data: session } = useSession();
+  console.log("data is", session);
+  if (!session && session != null) {
+    return null;
+  }
 
   const topVariants = {
     closed: {

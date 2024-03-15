@@ -1,5 +1,4 @@
-"use client";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface RegisterProps {
   onClose: () => void;
@@ -7,6 +6,8 @@ interface RegisterProps {
 }
 
 const Register = ({ onClose, Login }: RegisterProps) => {
+  const [email, setEmail] = useState(""); // Khai báo state cho email
+  const [password, setPassword] = useState(""); // Khai báo state cho password
   const [showPassword, setShowPassword] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
@@ -31,6 +32,24 @@ const Register = ({ onClose, Login }: RegisterProps) => {
 
   const handleMouseOut = () => {
     setShowTooltip(false);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Ngăn chặn form submit mặc định
+    // Xử lý dữ liệu đăng ký ở đây, có thể gửi request đăng ký đến server
+    console.log("Email:", email);
+    console.log("Password:", password);
+    const response = await fetch("/api/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
+    // console.log("response is", response);
   };
 
   return (
@@ -66,7 +85,7 @@ const Register = ({ onClose, Login }: RegisterProps) => {
                 </h1>
               </div>
               <div className="my-0 mx-auto w-[268px] text-center">
-                <form>
+                <form onSubmit={handleSubmit}>
                   <div className="ml-2 mb-1">
                     <label
                       htmlFor="email"
@@ -84,11 +103,14 @@ const Register = ({ onClose, Login }: RegisterProps) => {
                           <input
                             type="email"
                             id="email"
+                            name="email"
                             placeholder="Email"
                             spellCheck="false"
                             autoComplete="email"
                             aria-invalid="false"
                             className="rounded-[16px] py-3 px-4 text-[16px] border-2 border-solid border-customColor-color_border_container h-[48px] w-full iFc"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                           />
                         </div>
                       </span>
@@ -112,10 +134,12 @@ const Register = ({ onClose, Login }: RegisterProps) => {
                             type={showPassword ? "text" : "password"}
                             id="password"
                             name="password"
-                            placeholder="Mật khâủ"
+                            placeholder="Mật khẩu"
                             autoComplete="new-password"
                             spellCheck="false"
                             className="h-[48px] w-full overflow-hidden text-ellipsis iFc border-2 border-solid border-customColor-color_border_container pr-8 rounded-[16px] py-3 px-4 text-[16px]"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                           />
                           <div className="right-0 bottom-0 top-0 absolute">
                             <div className="h-full mr-2 rounded-[50%] items-center flex flex-row">
@@ -123,7 +147,7 @@ const Register = ({ onClose, Login }: RegisterProps) => {
                                 className="h-[20px] w-[20px] justify-center items-center flex cursor-pointer"
                                 onClick={() => setShowPassword((prev) => !prev)}
                               >
-                                {showPassword == false ? (
+                                {showPassword === false ? (
                                   <img
                                     src="/icons8-eye-60.png"
                                     alt="showPass"

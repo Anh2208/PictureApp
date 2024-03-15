@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export const GET = async () => {
   try {
-    const contents = await prisma.post.findMany();
+    const contents = await prisma.user.findMany();
     return new NextResponse(JSON.stringify(contents), { status: 200 });
   } catch (error) {
     console.log("error:", error);
