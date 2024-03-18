@@ -46,15 +46,11 @@ model User {
   firstname     String?
   lastname      String?
   email         String?   @unique
-<<<<<<< HEAD
-  password      String?
-=======
-  birhdate      DateTime?
+  birthdate     DateTime?
   password      String?
   username      String?
   gender        String?
   country       String?
->>>>>>> 3985cf9df9ef7f363819e0d2a191783564e56fe6
   emailVerified DateTime?
   image         String?
   accounts      Account[]

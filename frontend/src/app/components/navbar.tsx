@@ -34,11 +34,10 @@ const Navbar = () => {
   //   setShowRegister(!showRegister);
   // };
   const { data: session } = useSession();
-  console.log("data is", session);
   if (!session && session != null) {
     return null;
   }
-
+  console.log("sessison is", session);
   const topVariants = {
     closed: {
       rotate: 0,

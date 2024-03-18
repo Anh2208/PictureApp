@@ -35,7 +35,7 @@ CREATE TABLE `User` (
     `firstname` VARCHAR(191) NULL,
     `lastname` VARCHAR(191) NULL,
     `email` VARCHAR(191) NULL,
-    `birhdate` DATETIME(3) NULL,
+    `birthdate` DATETIME(3) NULL,
     `password` VARCHAR(191) NULL,
     `username` VARCHAR(191) NULL,
     `gender` VARCHAR(191) NULL,

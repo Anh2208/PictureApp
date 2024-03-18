@@ -8,6 +8,7 @@ interface RegisterProps {
 const Register = ({ onClose, Login }: RegisterProps) => {
   const [email, setEmail] = useState(""); // Khai báo state cho email
   const [password, setPassword] = useState(""); // Khai báo state cho password
+  const [birthDate, setBirthDate] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
@@ -36,9 +37,7 @@ const Register = ({ onClose, Login }: RegisterProps) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Ngăn chặn form submit mặc định
-    // Xử lý dữ liệu đăng ký ở đây, có thể gửi request đăng ký đến server
-    console.log("Email:", email);
-    console.log("Password:", password);
+    const birthdate = new Date(birthDate).toISOString();
     const response = await fetch("/api/user", {
       method: "POST",
       headers: {
@@ -47,9 +46,14 @@ const Register = ({ onClose, Login }: RegisterProps) => {
       body: JSON.stringify({
         email: email,
         password: password,
+        birthdate: birthdate,
       }),
     });
-    // console.log("response is", response);
+    if (response.ok) {
+      Login();
+    } else {
+      console.log("Registarion false");
+    }
   };
 
   return (
@@ -209,6 +213,7 @@ const Register = ({ onClose, Login }: RegisterProps) => {
                             type="date"
                             name="date"
                             id="date"
+                            onChange={(e) => setBirthDate(e.target.value)}
                             className="rounded-2xl py-3 px-4 text-[16px] border-2 border-customColor-color_border_container min-h-[48px] w-full"
                           />
                         </div>
