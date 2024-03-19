@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 
 const links = [
   { url: "/", title: "Trang chủ" },
-  { url: "/create", title: "Tạo" },
+  { url: "/pin-creation-tool", title: "Tạo" },
 ];
 
 const images = [
