@@ -60,19 +60,26 @@ model User {
 }
 
 model Post {
-  id           String  @id @default(cuid())
-  User         User?   @relation(fields: [userId], references: [id])
+  id           String    @id @default(cuid())
+  User         User?     @relation(fields: [userId], references: [id])
   title        String
   images       String
   description  String
   link         String
   board        String
   tagged_topic String
-  save         String
-  comment      String?
-  react        String?
+  comments     Comment[]
+  reacts       String?
   userId       String?
 }
+
+model Comment {
+  id   String @id @default(cuid())
+  Post Post?  @relation(fields: [id], references: [id])
+  text String
+}
+
+
 
 model Message {
   id        String   @id @default(cuid())

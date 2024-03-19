@@ -56,7 +56,6 @@ CREATE TABLE `Post` (
     `link` VARCHAR(191) NOT NULL,
     `board` VARCHAR(191) NOT NULL,
     `tagged_topic` VARCHAR(191) NOT NULL,
-    `save` VARCHAR(191) NOT NULL,
     `comment` VARCHAR(191) NULL,
     `react` VARCHAR(191) NULL,
     `userId` VARCHAR(191) NULL,

@@ -37,6 +37,7 @@ const Navbar = () => {
   if (!session && session != null) {
     return null;
   }
+
   const topVariants = {
     closed: {
       rotate: 0,

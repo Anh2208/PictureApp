@@ -1,4 +1,4 @@
-const ProfilePage = () => {
+const ProfilePage = ({ params }: { params: { username: string } }) => {
   return (
     <div className="snap-y snap-mandatory h-[calc(100vh-5rem)] overflow-auto no-scrollbar">
       <div className="snap-center flex h-[calc(100vh-5rem)] justify-center items-center bg-red-300">

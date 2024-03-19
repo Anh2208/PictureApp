@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Message from "./message";
 import Login from "./login";
 import Register from "./register";
+import Link from "next/link";
 
 const UserLinks = () => {
   const [showRegister, setShowRegister] = useState(false);
@@ -12,6 +13,7 @@ const UserLinks = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [action, setAction] = useState(false);
   const { data: session, status } = useSession();
+
   useEffect(() => {
     if (status === "authenticated") {
       setShowLogin(false);
@@ -23,6 +25,9 @@ const UserLinks = () => {
     setShowLogin(!showLogin);
     setShowRegister(!showRegister);
   };
+
+  const email = session?.user?.email || "underfine";
+  const username = email.split("@")[0];
 
   return (
     <>
@@ -97,13 +102,15 @@ const UserLinks = () => {
                       <div className="relative bg-customColor-color_background_box_secondary">
                         <div className="justify-center absolute flex flex-row">
                           {session?.user?.image ? (
-                            <img
-                              src={session.user.image}
-                              className="rounded-full"
-                              alt="image"
-                              width={24}
-                              height={24}
-                            />
+                            <Link href={ `/${username}`}>
+                              <img
+                                src={session.user.image}
+                                className="rounded-full"
+                                alt="image"
+                                width={24}
+                                height={24}
+                              />{" "}
+                            </Link>
                           ) : (
                             <img
                               src="/icons8-user-64.png"
