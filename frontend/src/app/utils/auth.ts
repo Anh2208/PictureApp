@@ -41,7 +41,6 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isCorrectPassword) throw new Error("Invalid Credentials");
-        console.log("user is", user);
 
         // Tạo phiên người dùng sau khi đăng nhập thành công
         const session = {

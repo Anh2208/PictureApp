@@ -14,24 +14,29 @@ const CreatePage = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-  const [loading, setLoading] = useState(true); // Thêm state 'loading'
+  const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
   const router = useRouter();
+  // const [selectedFile, setSelectedFile] = useState(null);
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile(event.target.files?.[0] || null);
+  };
 
   useEffect(() => {
-    // Kiểm tra nếu session đã được load và có giá trị
     if (session) {
-      setLoading(false); // Đã load xong, không còn loading nữa
+      setLoading(false);
     }
     if (session == null) {
       router.push("/");
     }
     console.log(session);
-  }, [session]); // Chạy useEffect mỗi khi session thay đổi
+  }, [session]);
 
-  // Nếu đang loading hoặc chưa có session, không hiển thị gì cả
   if (loading || !session) {
-    return null; // Hoặc có thể trả về một spinner hoặc thông báo loading
+    return null;
   }
 
   return (
@@ -78,37 +83,50 @@ const CreatePage = () => {
         </b>
         <div className="flex">
           <div className="flex justify-center items-center w-[400px] pt-[20px] pl-[50px]">
-            <label
-              htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center w-full h-[450px] border-2 border-gray-300 border-dashed rounded-[30px] cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 16"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                  />
-                </svg>
-                <p className="mb-0 text-sm text-gray-500 dark:text-gray-400 text-right ">
-                  Chọn một tệp hoặc kéo thả tệp vào đây
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 text-center ">
-                  Bạn nên sử dụng tập tin .jpg chất lượng cao có kích thước dưới
-                  20MB hoặc tập tin .mp4 chất lượng cao có kích thước dưới
-                  200MB.
-                </p>
-              </div>
-              <input id="dropzone-file" type="file" className="hidden" />
-            </label>
+            {selectedFile ? (
+              <img
+                src={URL.createObjectURL(selectedFile)}
+                alt="Selected file"
+                className="max-w-full h-auto"
+              />
+            ) : (
+              <label
+                htmlFor="dropzone-file"
+                className="flex flex-col items-center justify-center w-full h-[450px] border-2 border-gray-300 border-dashed rounded-[30px] cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg
+                    className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 16"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                    />
+                  </svg>
+                  <p className="mb-0 text-sm text-gray-500 dark:text-gray-400 text-right ">
+                    Chọn một tệp hoặc kéo thả tệp vào đây
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center ">
+                    Bạn nên sử dụng tập tin .jpg chất lượng cao có kích thước
+                    dưới 20MB hoặc tập tin .mp4 chất lượng cao có kích thước
+                    dưới 200MB.
+                  </p>
+                </div>
+                <input
+                  id="dropzone-file"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
+            )}
           </div>
           <form action="">
             <div className="grid gap-3 pt-[20px] pl-[50px]">

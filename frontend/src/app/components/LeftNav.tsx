@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const links = [
   { url: "/", title: "Trang chủ" },
-  { url: "/create", title: "Tạo" },
+  { url: "/pin-creation-tool", title: "Tạo" },
 ];
 
 const LeftNav = () => {
