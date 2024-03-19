@@ -160,7 +160,7 @@ const UserLinks = () => {
                                               {session?.user?.image ? (
                                                 <img
                                                   src={session.user.image}
-                                                  className="absolute w-full"
+                                                  className="absolute w-full rounded-[50%]"
                                                   alt="image"
                                                   width={24}
                                                   height={24}
@@ -168,7 +168,7 @@ const UserLinks = () => {
                                               ) : (
                                                 <img
                                                   src="/icons8-user-64.png"
-                                                  className="absolute w-full"
+                                                  className="absolute w-full  rounded-[50%]"
                                                   alt="image"
                                                   width={24}
                                                   height={24}
