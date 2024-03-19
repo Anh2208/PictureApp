@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { NextAuthOptions, getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
@@ -6,40 +7,75 @@ import { prisma } from "./connect";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     GoogleProvider({
-      //   clientId: process.env.GOOGLE_ID as string,
-      //   clientSecret: process.env.GOOGLE_SECRET as string,
       clientId: process.env.GOOGLE_ID!,
       clientSecret: process.env.GOOGLE_SECRET!,
     }),
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. "Sign in with...")
-      name: "Credentials",
-      // `credentials` is used to generate a form on the sign in page.
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
+      name: "credentials",
       credentials: {
-        username: { email: "Username", type: "text", placeholder: "jsmith" },
-        password: { password: "Password", type: "password" },
+        email: { label: "email", type: "text" },
+        password: { label: "password", type: "password" },
       },
-      async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
+      // Authorization logic for normal account credentials
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password)
+          throw new Error("Invalid Credentials");
 
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
-          return null;
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials.email,
+          },
+        });
 
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
-        }
+        if (!user || !user?.password) throw new Error("Invalid Credentials");
+
+        const isCorrectPassword = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isCorrectPassword) throw new Error("Invalid Credentials");
+        console.log("user is", user);
+
+        // Tạo phiên người dùng sau khi đăng nhập thành công
+        const session = {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        };
+
+        return session;
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        return {
+          ...token,
+          username: user.name,
+          image: user.image,
+        };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          username: token.username,
+          image: token.picture,
+        },
+      };
+    },
+  },
 };
 
 export const getAuthSession = () => getServerSession(authOptions);

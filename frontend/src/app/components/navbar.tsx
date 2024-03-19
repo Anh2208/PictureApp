@@ -34,7 +34,6 @@ const Navbar = () => {
   //   setShowRegister(!showRegister);
   // };
   const { data: session } = useSession();
-  console.log("data is", session);
   if (!session && session != null) {
     return null;
   }

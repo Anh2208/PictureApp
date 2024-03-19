@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import Message from "./message";
 import Login from "./login";
 import Register from "./register";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const UserLinks = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [notification, setNotification] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
-  const { status } = useSession();
-
+  const { data: session, status } = useSession();
+  const router = useRouter();
   useEffect(() => {
     if (status === "authenticated") {
       setShowLogin(false);
@@ -24,6 +26,15 @@ const UserLinks = () => {
     setShowRegister(!showRegister);
   };
 
+  // const email = session?.user?.email || "underfine";
+  // const username = email.split("@")[0];
+
+  const handleAvatarClick = () => {
+    if (session?.user?.email) {
+      const username = session.user.email.split("@")[0];
+      router.push(`/${username}`);
+    }
+  };
   return (
     <>
       {status === "authenticated" ? (
@@ -86,6 +97,41 @@ const UserLinks = () => {
                 )}
               </div>
             </div>
+          </div>
+          {/* user */}
+          <div className="block">
+            <a href="/" className="rounded-[50%] w-full cursor-pointer">
+              <div className="h-[48px] w-[48px]">
+                <div className="w-full h-full justify-center items-center flex flex-row">
+                  <div className="h-[30px] w-[30px] border-2 rounded-[50%] border-black justify-center items-center flex flex-row">
+                    <div className="w-[24px] h-[24px] relative">
+                      <div className="relative bg-customColor-color_background_box_secondary">
+                        <div className="justify-center absolute flex flex-row">
+                          {session?.user?.image ? (
+                            <img
+                              src={session.user.image}
+                              className="rounded-full"
+                              alt="image"
+                              width={24}
+                              height={24}
+                              onClick={handleAvatarClick}
+                            />
+                          ) : (
+                            <img
+                              src="/icons8-user-64.png"
+                              className="rounded-full"
+                              alt="image"
+                              width={24}
+                              height={24}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
           </div>
           <div onClick={() => signOut()}>logout</div>
         </div>

@@ -1,5 +1,5 @@
 "use client";
-import { signIn, useSession } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,7 +10,10 @@ interface LoginProps {
 
 const Login = ({ onClose, Register }: LoginProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState(""); // Khai báo state cho email
+  const [password, setPassword] = useState(""); // Khai báo state cho password
   const formRef = useRef<HTMLDivElement>(null); // Sử dụng HTMLDivElement cho formRef
+  const route = useRouter();
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (formRef.current && !formRef.current.contains(event.target as Node)) {
@@ -24,6 +27,23 @@ const Login = ({ onClose, Register }: LoginProps) => {
       document.removeEventListener("click", handleOutsideClick);
     };
   }, [onClose]);
+
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("aajdjd");
+    const response = await signIn("credentials", {
+      email: email,
+      password: password,
+      redirect: false, // Prevent NextAuth from redirecting after sign in
+    });
+    const session = await getSession();
+    console.log("aajdjd", response);
+    console.log("session", session);
+    if (response?.ok) {
+    } else if (response?.error) {
+      console.log("111111");
+    }
+  };
 
   return (
     <div className="left-0 right-0 bottom-0 top-0 bg-black bg-opacity-60 fixed z-50">
@@ -58,7 +78,7 @@ const Login = ({ onClose, Register }: LoginProps) => {
                 </h1>
               </div>
               <div className="my-0 mx-auto w-[268px] text-center">
-                <form>
+                <form onSubmit={onSubmit}>
                   <div className="ml-2 mb-1">
                     <label
                       htmlFor="email"
@@ -80,6 +100,7 @@ const Login = ({ onClose, Register }: LoginProps) => {
                             spellCheck="false"
                             autoComplete="email"
                             aria-invalid="false"
+                            onChange={(e) => setEmail(e.target.value)}
                             className="rounded-[16px] py-3 px-4 text-[16px] border-2 border-solid border-customColor-color_border_container h-[48px] w-full iFc"
                           />
                         </div>
@@ -107,6 +128,7 @@ const Login = ({ onClose, Register }: LoginProps) => {
                             placeholder="Mật khâủ"
                             autoComplete="new-password"
                             spellCheck="false"
+                            onChange={(e) => setPassword(e.target.value)}
                             className="h-[48px] w-full overflow-hidden text-ellipsis iFc border-2 border-solid border-customColor-color_border_container pr-8 rounded-[16px] py-3 px-4 text-[16px]"
                           />
                           <div className="right-0 bottom-0 top-0 absolute">
@@ -142,7 +164,10 @@ const Login = ({ onClose, Register }: LoginProps) => {
                   </div>
                   <div className="mt-[16px]"></div>
                   <div className="text-center block">
-                    <button className="h-[40px] inline-block rounded-[20px] py-0 px-[18px] text-[15px] font-bold cursor-pointer mt-[8px] align-middle text-center text-white Il7 w-full">
+                    <button
+                      type="submit"
+                      className="h-[40px] inline-block rounded-[20px] py-0 px-[18px] text-[15px] font-bold cursor-pointer mt-[8px] align-middle text-center text-white Il7 w-full"
+                    >
                       <div className="">Đăng nhập</div>
                     </button>
                   </div>
