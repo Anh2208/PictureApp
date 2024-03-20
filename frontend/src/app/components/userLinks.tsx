@@ -94,39 +94,39 @@ const UserLinks = () => {
           </div>
           {/* user */}
           <div className="block">
-            <a href="/" className="rounded-[50%] w-full cursor-pointer">
+            <div className="rounded-[50%] w-full cursor-pointer">
               <div className="h-[48px] w-[48px]">
                 <div className="w-full h-full justify-center items-center flex flex-row">
                   <div className="h-[30px] w-[30px] border-2 rounded-[50%] border-black justify-center items-center flex flex-row">
                     <div className="w-[24px] h-[24px] relative cursor-pointer">
                       <div className="relative bg-customColor-color_background_box_secondary">
                         <div className="justify-center absolute flex flex-row">
-                          {session?.user?.image ? (
-                            <Link href={ `/${username}`}>
+                          <Link href={`/${username}`}>
+                            {session?.user?.image ? (
                               <img
                                 src={session.user.image}
                                 className="rounded-full"
                                 alt="image"
                                 width={24}
                                 height={24}
-                              />{" "}
-                            </Link>
-                          ) : (
-                            <img
-                              src="/icons8-user-64.png"
-                              className="rounded-full"
-                              alt="image"
-                              width={24}
-                              height={24}
-                            />
-                          )}
+                              />
+                            ) : (
+                              <img
+                                src="/icons8-user-64.png"
+                                className="rounded-full"
+                                alt="image"
+                                width={24}
+                                height={24}
+                              />
+                            )}
+                          </Link>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </a>
+            </div>
           </div>
           <div className="block">
             <button

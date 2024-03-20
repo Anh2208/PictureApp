@@ -38,10 +38,19 @@ export const POST = async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
   try {
     const body = await req.json();
-    const { email, password } = body;
+    const { email } = body;
 
-    const user = await signIn("credentials", { email, password });
-
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      return (
+        new NextResponse(JSON.stringify({ message: "User not found!" })),
+        { status: 404 }
+      );
+    }
     return new NextResponse(JSON.stringify(user), { status: 200 });
   } catch (error) {
     return (
