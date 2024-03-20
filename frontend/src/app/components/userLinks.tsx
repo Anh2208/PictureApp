@@ -109,7 +109,7 @@ const UserLinks = () => {
                                 alt="image"
                                 width={24}
                                 height={24}
-                              />{" "}
+                              />
                             </Link>
                           ) : (
                             <img
