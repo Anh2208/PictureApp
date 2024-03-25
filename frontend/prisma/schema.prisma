@@ -45,14 +45,16 @@ model User {
   name          String?
   firstname     String?
   lastname       String?
-  email         String?   @unique
+  email         String   @unique
   birthdate     DateTime?
   password      String?
-  username      String?
-  gender        String?
+  username      String? @unique
+  gender        String   @default("khac")
   country       String?
   emailVerified DateTime?
   image         String?
+  about         String?
+  website       String?
   accounts      Account[]
   sessions      Session[]
   posts         Post[]

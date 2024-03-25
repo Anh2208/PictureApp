@@ -1,5 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 interface User {
@@ -39,7 +40,6 @@ const ProfilePage = () => {
 
     fetchData();
   }, [session]);
-  console.log(user);
   return (
     <div className="pt-[80px]">
       <div className="block box-border">
@@ -53,7 +53,7 @@ const ProfilePage = () => {
                       {user?.image ? (
                         <img
                           src={user.image}
-                          className="absolute w-full rounded-[50%]"
+                          className="absolute w-[120px] h-[120px] rounded-[50%] object-cover"
                           alt="image"
                         />
                       ) : (
@@ -118,13 +118,16 @@ const ProfilePage = () => {
                       </button>
                     </div>
                     <div className="mx-1">
-                      <button className="min-w-[60px] p-0">
+                      <Link
+                        href={"settings#profile"}
+                        className="min-w-[60px] p-0"
+                      >
                         <div className="justify-center items-center flex px-4 py-3 w-full bg-customColor-color_background_button_secondary_default rounded-[24px]">
                           <div className="text-center font-semibold iFc text-[16px] cursor-pointer">
                             Chỉnh sửa hồ sơ
                           </div>
                         </div>
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

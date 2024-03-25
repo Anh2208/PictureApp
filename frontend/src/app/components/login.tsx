@@ -30,7 +30,6 @@ const Login = ({ onClose, Register }: LoginProps) => {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("aajdjd");
     const response = await signIn("credentials", {
       email: email,
       password: password,

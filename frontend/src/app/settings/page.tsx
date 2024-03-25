@@ -1,8 +1,49 @@
 "use client";
 import Link from "next/link";
 import NavbarProfile from "../components/navbarProfile";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+
+interface User {
+  image: string;
+  name: string;
+  firstname: string;
+  lastname: string;
+}
+
+const getData = async (email: string) => {
+  const res = await fetch(`http://localhost:3000/api/user/${email}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed!");
+  }
+
+  return res.json();
+};
 
 const Settings = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const { data: session } = useSession();
+  const [user, setUser] = useState<User | null>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (session?.user?.email) {
+        try {
+          const userData = await getData(session.user.email);
+          setUser(userData);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [session]);
+  console.log("user", user);
   return (
     <div className="grid grid-cols-12 p-3 h-[1000px] pt-[80px] overflow-x-hidden">
       <NavbarProfile />
@@ -37,14 +78,16 @@ const Settings = () => {
               <input
                 type="text"
                 name="ten"
-                id=""
+                defaultValue={user?.lastname}
+                onChange={(e) => setLastName(e.target.value)}
                 className="flex p-3 mt-5 rounded-[20px] ml-[-35px] mr-[35px] border border-slate-300 hover:border-slate-400"
               />
               <span className="text-[12px]">Họ</span>
               <input
                 type="text"
                 name="ho"
-                id=""
+                defaultValue={user?.firstname}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="flex p-3 mt-5 ml-[-35px] rounded-[20px] border border-slate-300 hover:border-slate-400"
               />
             </div>
@@ -53,7 +96,6 @@ const Settings = () => {
               <input
                 type="text"
                 name="gioithieu"
-                id=""
                 className="flex p-3 w-[500px] ml-[-17px] pb-[70px] rounded-[20px] border border-slate-300 hover:border-slate-400"
                 placeholder="Kể câu chuyện của bạn"
               />
@@ -63,7 +105,6 @@ const Settings = () => {
               <input
                 type="text"
                 name="trangweb"
-                id=""
                 className="flex p-3 w-[500px] ml-[-17px] rounded-[20px] border border-slate-300 hover:border-slate-400"
                 placeholder="Thêm liên kết để hướng lưu lượng vào website"
               />
@@ -73,7 +114,6 @@ const Settings = () => {
               <input
                 type="text"
                 name="tennguoidung"
-                id=""
                 className="flex p-3 w-[500px] ml-[-17px] rounded-[20px] border border-slate-300 hover:border-slate-400"
                 placeholder="Hãy chọn thật khéo để người khác có thể tìm thấy bạn"
               />

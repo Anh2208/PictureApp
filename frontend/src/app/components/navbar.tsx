@@ -25,18 +25,7 @@ const images = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
   const [logged, setLogged] = useState(false);
-
-  // const SwicthAction = () => {
-  //   setShowLogin(!showLogin);
-  //   setShowRegister(!showRegister);
-  // };
-  const { data: session } = useSession();
-  if (!session && session != null) {
-    return null;
-  }
 
   const topVariants = {
     closed: {
