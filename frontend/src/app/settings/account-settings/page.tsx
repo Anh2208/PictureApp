@@ -3,7 +3,54 @@ import NavbarProfile from "../../components/navbarProfile";
 import "react-datepicker/dist/react-datepicker.css";
 import { Select, Option } from "@material-tailwind/react";
 import { FaQuestion } from "react-icons/fa";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+
+interface User {
+  email: string;
+  name: string;
+  firstname: string;
+  lastname: string;
+  birthdate: Date;
+  gender: string;
+}
+
+const getData = async (email: string) => {
+  const res = await fetch(`http://localhost:3000/api/user/${email}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed!");
+  }
+
+  return res.json();
+};
 const Account_Settings = () => {
+  const { data: session } = useSession();
+  const [user, setUser] = useState<User | null>();
+  const [updatedBirthday, setUpdatedBirthday] = useState(null);
+  const [gender, setGender] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (session?.user?.email) {
+        try {
+          const userData = await getData(session.user.email);
+          setUser({
+            ...userData,
+            birthday: userData.birthday ? new Date(userData.birthday) : null,
+          });
+          setGender(userData?.gender);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [session]);
+  console.log(user?.gender);
   return (
     <div className="container grid grid-cols-12 p-3 h-[1400px] pt-[80px]">
       <NavbarProfile />
@@ -27,8 +74,9 @@ const Account_Settings = () => {
               <span className="text-[12px] iFc">Email • Riêng tư</span>
               <input
                 type="text"
-                name="ho"
-                id=""
+                name="email"
+                defaultValue={user?.email}
+                readOnly
                 className="flex p-[10px] mt-6 ml-[-82px] rounded-[17px] border-2 w-[490px] border-slate-300 hover:border-slate-400"
               />
             </div>
@@ -37,7 +85,6 @@ const Account_Settings = () => {
               <input
                 type="password"
                 name="matkhau"
-                id=""
                 className="block p-3 w-[400px] mt-5 ml-[-50px] rounded-[17px] border-2 border-slate-300 hover:border-slate-400"
               />
               <span className="p-3 pt-3 ml-3 w-[77px] bg-[#E9E9E9] iFc rounded-[25px] text-center font-medium justify-content-center">
@@ -69,7 +116,11 @@ const Account_Settings = () => {
                 <input
                   type="date"
                   name=""
-                  id=""
+                  defaultValue={
+                    user?.birthdate
+                      ? new Date(user.birthdate).toISOString().split("T")[0]
+                      : ""
+                  }
                   className="p-3 border-2 border-gray-300 rounded-[20px] mt-[5px] hover:border-gray-400"
                 />
               </div>
@@ -86,6 +137,8 @@ const Account_Settings = () => {
                         type="radio"
                         className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-gray-900 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
                         id="nam"
+                        checked={gender == "nam"}
+                        onChange={() => setGender("nam")}
                       />
                       <span className="absolute text-gray-900 transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
                         <svg
@@ -120,6 +173,8 @@ const Account_Settings = () => {
                         type="radio"
                         className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-gray-900 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
                         id="nu"
+                        checked={gender == "nu"}
+                        onChange={() => setGender("nu")}
                       />
                       <span className="absolute text-gray-900 transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
                         <svg
@@ -155,6 +210,8 @@ const Account_Settings = () => {
                         type="radio"
                         className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-gray-900 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
                         id="khac"
+                        checked={gender == "khac"}
+                        onChange={() => setGender("khac")}
                       />
                       <span className="absolute text-gray-900 transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
                         <svg

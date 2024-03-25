@@ -1,10 +1,12 @@
+"use client";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import Message from "./message";
 import Login from "./login";
 import Register from "./register";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const UserLinks = () => {
   const [showRegister, setShowRegister] = useState(false);
@@ -13,6 +15,7 @@ const UserLinks = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [action, setAction] = useState(false);
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -28,6 +31,15 @@ const UserLinks = () => {
 
   const email = session?.user?.email || "underfine";
   const username = email.split("@")[0];
+
+  // const LogOut: MouseEventHandler<HTMLDivElement> = async () => {
+  //   try {
+  //     signOut();
+  //     router.push("/");
+  //   } catch (error) {
+  //     console.log("Somthing went wrong!!!");
+  //   }
+  // };
 
   return (
     <>
@@ -105,10 +117,8 @@ const UserLinks = () => {
                             {session?.user?.image ? (
                               <img
                                 src={session.user.image}
-                                className="rounded-full"
+                                className="rounded-full w-[24px] h-[24px] object-cover"
                                 alt="image"
-                                width={24}
-                                height={24}
                               />
                             ) : (
                               <img
@@ -167,15 +177,13 @@ const UserLinks = () => {
                                               {session?.user?.image ? (
                                                 <img
                                                   src={session.user.image}
-                                                  className="absolute w-full rounded-[50%]"
+                                                  className="absolute w-[24px] h-[24px] rounded-[50%]"
                                                   alt="image"
-                                                  width={24}
-                                                  height={24}
                                                 />
                                               ) : (
                                                 <img
                                                   src="/icons8-user-64.png"
-                                                  className="absolute w-full  rounded-[50%]"
+                                                  className="absolute w-full rounded-[50%]"
                                                   alt="image"
                                                   width={24}
                                                   height={24}
@@ -478,7 +486,9 @@ const UserLinks = () => {
                         </div>
                         <div
                           className="rounded-[8px] w-full cursor-pointer"
-                          onClick={() => signOut()}
+                          onClick={() =>
+                            signOut({ callbackUrl: "http://localhost:3000/" })
+                          }
                         >
                           <div className="rounded-[8px] p-2 flex flex-col">
                             <div className="flex flex-row m-0">

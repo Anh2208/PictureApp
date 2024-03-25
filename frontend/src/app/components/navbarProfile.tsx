@@ -13,7 +13,6 @@ const links = [
 const NavbarProfile = () => {
   const pathName = usePathname();
 
-  console.log(pathName);
   return (
     <div className="col-span-3">
       <div className="flex flex-col mt-9 ml-1">

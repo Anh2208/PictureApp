@@ -1,9 +1,9 @@
-import bcrypt from "bcrypt";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { NextAuthOptions, getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./connect";
+import { compare } from "bcrypt";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -19,52 +19,119 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "email", type: "text" },
-        password: { label: "password", type: "password" },
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       // Authorization logic for normal account credentials
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password)
-          throw new Error("Invalid Credentials");
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
-        const user = await prisma.user.findUnique({
+        const existingUser = await prisma.user.findUnique({
           where: {
-            email: credentials.email,
+            email: credentials?.email,
           },
         });
 
-        if (!user || !user?.password) throw new Error("Invalid Credentials");
+        if (!existingUser) {
+          return null;
+        }
 
-        const isCorrectPassword = await bcrypt.compare(
+        if (!existingUser.password) {
+          return null;
+        }
+        const passwordMatch = await compare(
           credentials.password,
-          user.password
+          existingUser.password
         );
 
-        if (!isCorrectPassword) throw new Error("Invalid Credentials");
-
-        // Tạo phiên người dùng sau khi đăng nhập thành công
+        if (!passwordMatch) {
+          return null;
+        }
+        console.log("lllaakak", existingUser);
         const session = {
-          id: user.id,
-          email: user.email,
-          name: user.name,
+          id: existingUser.id,
+          email: existingUser.email,
+          name: existingUser.name,
+          username: existingUser.username,
         };
-
         return session;
       },
     }),
   ],
   callbacks: {
+    // async signIn({ account, profile }) {
+    //   if (account?.provider === "google" && profile?.email) {
+    //     const emailParts = profile.email.split("@");
+    //     const username = emailParts[0];
+
+    //     const existingUser = await prisma.user.findUnique({
+    //       where: { email: profile.email },
+    //     });
+
+    //     if (existingUser) {
+    //       await prisma.user.update({
+    //         where: { email: profile.email },
+    //         data: { username },
+    //       });
+    //     }
+    //     // Trả về true để xác nhận đăng nhập thành công
+    //     return true;
+    //   }
+
+    //   // Nếu không phải đăng nhập bằng Google hoặc không có email, trả về false để từ chối đăng nhập
+    //   return true;
+    // },
+
     async jwt({ token, user }) {
+      if (!token.username && token.email) {
+        const emailParts = token.email.split("@");
+        const newusername = emailParts[0];
+        const existingUser = await prisma.user.findUnique({
+          where: {
+            email: token.email!,
+          },
+        });
+
+        if (existingUser) {
+          await prisma.user.update({
+            where: { email: token.email },
+            data: { username: newusername },
+          });
+          return {
+            ...token,
+            username: newusername,
+          };
+        }
+      }
       if (user) {
         return {
           ...token,
-          username: user.name,
           image: user.image,
+          username: user.username,
         };
       }
       return token;
     },
     async session({ session, token }) {
+      // console.log("ahahahah", token);
+
+      // if (!token.username && session?.user.email) {
+      //   const emailParts = session?.user.email.split("@");
+      //   const newusername = emailParts[0];
+      //   const existingUser = await prisma.user.findUnique({
+      //     where: { email: session?.user.email },
+      //   });
+
+      //   if (existingUser) {
+      //     console.log("ihihiihih", existingUser);
+      //     await prisma.user.update({
+      //       where: { email: session?.user.email },
+      //       data: { username: newusername },
+      //     });
+      //   }
+      // }
       return {
         ...session,
         user: {
