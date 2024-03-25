@@ -53,6 +53,7 @@ CREATE TABLE `User` (
 -- CreateTable
 CREATE TABLE `Post` (
     `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `images` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
@@ -60,7 +61,6 @@ CREATE TABLE `Post` (
     `board` VARCHAR(191) NOT NULL,
     `tagged_topic` VARCHAR(191) NOT NULL,
     `reacts` VARCHAR(191) NULL,
-    `userId` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -100,7 +100,7 @@ ALTER TABLE `Account` ADD CONSTRAINT `Account_userId_fkey` FOREIGN KEY (`userId`
 ALTER TABLE `Session` ADD CONSTRAINT `Session_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Post` ADD CONSTRAINT `Post_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Post` ADD CONSTRAINT `Post_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Comment` ADD CONSTRAINT `Comment_id_fkey` FOREIGN KEY (`id`) REFERENCES `Post`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

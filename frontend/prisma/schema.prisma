@@ -63,7 +63,8 @@ model User {
 
 model Post {
   id           String    @id @default(cuid())
-  User         User?     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
   title        String
   images       String
   description  String
@@ -72,7 +73,7 @@ model Post {
   tagged_topic String
   comments     Comment[]
   reacts       String?
-  userId       String?
+
 }
 
 model Comment {

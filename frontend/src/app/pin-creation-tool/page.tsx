@@ -1,6 +1,7 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
+import { Cookie } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
@@ -8,14 +9,27 @@ import {
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
+import { toast } from "react-toastify";
 const cloudinary = require("cloudinary");
-const getData = async () => {
-  const res = await fetch(`http://localhost:3000/api/post`, {
+
+interface User {
+  id: string;
+  image: string;
+  name: string;
+  firstname: string;
+  lastname: string;
+}
+
+const getData = async (email: string) => {
+  const res = await fetch(`http://localhost:3000/api/user/${email}`, {
     cache: "no-store",
   });
+
   if (!res.ok) {
     throw new Error("Failed!");
   }
+
+  return res.json();
 };
 
 const CreatePage = () => {
@@ -49,7 +63,7 @@ const CreatePage = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const [file, setFile] = useState<File>();
+  const [file, setFile] = useState<File | null>();
 
   const handleChangeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
@@ -57,7 +71,21 @@ const CreatePage = () => {
     setFile(item);
   };
 
+  const [user, setUser] = useState<User | null>();
+
   useEffect(() => {
+    const fetchData = async () => {
+      if (session?.user?.email) {
+        try {
+          const userData = await getData(session.user.email);
+          setUser(userData);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+    };
+
+    fetchData();
     if (session) {
       setLoading(false);
     }
@@ -72,10 +100,8 @@ const CreatePage = () => {
     data.append("file", file!);
     data.append("upload_preset", "PicbuApp");
 
-    const res = await fetch("https://api.cloudinary.com/v1_1/jokeay/image", {
+    const res = await fetch("https://api.cloudinary.com/v1_1/jokeay/upload", {
       method: "POST",
-      headers: { "Content-Type": "multipart/form-data" },
-      redirect: 'follow',
       body: data,
     });
 
@@ -88,10 +114,14 @@ const CreatePage = () => {
     event.preventDefault();
     try {
       const url = await upload();
-      await fetch("/api/post", {
+
+      const res = await fetch("/api/post", {
         method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
+          userId: user?.id,
           images: url,
           title: title,
           description: description,
@@ -100,6 +130,12 @@ const CreatePage = () => {
           tagged_topic: tag,
         }),
       });
+      if (res.ok) {
+        toast.success("Đăng Bài Thành Công!!!");
+        setFile(null);
+      } else {
+        toast.error("Something went wrong");
+      }
     } catch (err) {
       console.log(err);
     }
