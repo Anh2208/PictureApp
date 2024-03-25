@@ -8,8 +8,23 @@ import {
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
+const cloudinary = require("cloudinary");
+const getData = async () => {
+  const res = await fetch(`http://localhost:3000/api/post`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error("Failed!");
+  }
+};
 
 const CreatePage = () => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [link, setLink] = useState("");
+  const [board, setBoard] = useState("");
+  const [tag, setTag] = useState("");
+
   const [isOpen, setIsOpen] = useState(true);
 
   const [CommentOpen, setCommentOpen] = useState(true);
@@ -33,12 +48,13 @@ const CreatePage = () => {
   const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
   const router = useRouter();
-  // const [selectedFile, setSelectedFile] = useState(null);
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File>();
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedFile(event.target.files?.[0] || null);
+  const handleChangeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    const item = (target.files as FileList)[0];
+    setFile(item);
   };
 
   useEffect(() => {
@@ -51,9 +67,47 @@ const CreatePage = () => {
     return null;
   }
 
+  const upload = async () => {
+    const data = new FormData();
+    data.append("file", file!);
+    data.append("upload_preset", "PicbuApp");
+
+    const res = await fetch("https://api.cloudinary.com/v1_1/jokeay/image", {
+      method: "POST",
+      headers: { "Content-Type": "multipart/form-data" },
+      redirect: 'follow',
+      body: data,
+    });
+
+    const resData = await res.json();
+
+    return resData.url;
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const url = await upload();
+      await fetch("/api/post", {
+        method: "POST",
+        headers: { "Content-Type": "multipart/form-data" },
+        body: JSON.stringify({
+          images: url,
+          title: title,
+          description: description,
+          link: link,
+          board: board,
+          tagged_topic: tag,
+        }),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="pt-[80px]">
-      <div>
+      <form onSubmit={handleSubmit}>
         <div className="flex flex-col m-0">
           <div className="w-[75%] z-30 justify-center self-center box-border fixed mt-[12px] flex flex-row"></div>
           <div className="w-full h-[calc(-80px + 100em)] flex flex-row m-0">
@@ -128,7 +182,7 @@ const CreatePage = () => {
                           role="button"
                           tabIndex={0}
                         >
-                          {selectedFile && (
+                          {file && (
                             <div className="border-black rounded-[8px] items-center relative p-[8px] bg-[#e2e2e2] flex flex-row cursor-pointer">
                               <div className="bg-[#e9e9e9] rounded-[12px] flex relative overflow-hidden cursor-pointer">
                                 <div className="w-[72px] h-[72px] rounded-[12px] relative will-change-transform cursor-pointer">
@@ -140,9 +194,7 @@ const CreatePage = () => {
                                             fetchPriority="auto"
                                             loading="lazy"
                                             className="object-cover bg-transparent absolute w-full h-full border-0 max-w-full align-middle"
-                                            src={URL.createObjectURL(
-                                              selectedFile
-                                            )}
+                                            src={URL.createObjectURL(file)}
                                             alt=""
                                           />
                                         </div>
@@ -222,6 +274,7 @@ const CreatePage = () => {
                 </div>
               )}
             </div>
+
             <div className="ml-[351px] mr-0 overflow-x-auto min-h-0 min-w-0 flex flex-row ">
               <div className="w-[1504px] rounded-[32px] relative bg-[#fff] ">
                 <div className="h-[700px] relative flex flex-col">
@@ -234,7 +287,7 @@ const CreatePage = () => {
                       </h1>
                     </div>
                     <div className="h-full w-[calc(50% - 46px)] ml-0 items-center left-0 top-0 absolute pl-[12px] pr-[12px] flex flex-row"></div>
-                    {selectedFile && (
+                    {file && (
                       <div className="h-full mr-0 items-center right-0 top-0 absolute pl-[12px] pr-[12px] flex flex-row">
                         <div className="pl-[12px] pr-[12px]">
                           <div className="iFc text-left break-words font-normal text-[#767676]">
@@ -245,7 +298,7 @@ const CreatePage = () => {
                           <div className="">
                             <button
                               className="border-0 min-w-[60px] inline-block p-0 bg-transparent rounded-[24px] cursor-pointer leading-3"
-                              type="button"
+                              type="submit"
                             >
                               <div className="border-0 min-w-[60px] justify-center items-center flex min-h-[48px] pl-[16px] pr-[16px] pt-[12px] pb-[12px] w-full cursor-pointer rounded-[24px] transition-transform bg-[#e60023]">
                                 <div className="text-center font-semibold text-[16px] text-[#fff] cursor-pointer leading-3">
@@ -262,14 +315,18 @@ const CreatePage = () => {
                     <div className="mr-auto ml-auto">
                       <div className="justify-center flex-row flex">
                         <div className="m-[24px]">
-                          <div className="h-[574px] w-[375px] pb-[16px] flex items-center relative bg-[#fff] flex-row">
+                          <div
+                            className={`${
+                              file ? "h-auto" : "h-[574px]"
+                            }  w-[375px] pb-[16px] flex items-center relative bg-[#fff] flex-row`}
+                          >
                             <div className="h-full w-full justify-center items-center mb-[16px] mt-[16px] pl-0 pr-0 flex flex-col">
                               <div className="rounded-[32px] h-full w-full border-[2px] relative overflow-hidden bg-[#e9e9e9]">
                                 <div className="h-full rounded-[32px] relative">
-                                  {selectedFile ? (
+                                  {file ? (
                                     <img
-                                      className="w-[375px] h-[500px] bg-no-repeat left-0 top-0 origin-center"
-                                      src={URL.createObjectURL(selectedFile)}
+                                      className="w-[375px] h-auto bg-no-repeat left-0 top-0 origin-center"
+                                      src={URL.createObjectURL(file)}
                                       alt=""
                                     />
                                   ) : (
@@ -302,7 +359,7 @@ const CreatePage = () => {
                                         </div>
                                       </div>
                                       <input
-                                        onChange={handleFileChange}
+                                        onChange={handleChangeImg}
                                         className="cursor-pointer h-full opacity-0 absolute w-full left-0 top-0 "
                                         type="file"
                                       />
@@ -352,6 +409,10 @@ const CreatePage = () => {
                                             className="rounded-[16px] p-[12px] text-[16px] border-[#cdcdcd] min-h-[48px] max-w-[100%] overflow-hidden overflow-ellipsis whitespace-nowrap iFc w-full text-[#111] bg-[#fff] border-[2px] appearance-none"
                                             type="text"
                                             placeholder="Add a title"
+                                            value={title}
+                                            onChange={(e) =>
+                                              setTitle(e.target.value)
+                                            }
                                           />
                                         </div>
                                       </span>
@@ -367,20 +428,31 @@ const CreatePage = () => {
                                         </div>
                                       </div>
                                       <div className="m-[4px]">
-                                        <div className="rounded-[0px] w-full cursor-pointer h-full ">
+                                        <div
+                                          aria-invalid="false"
+                                          role="button"
+                                          tabIndex={0}
+                                          className="rounded-[0px] w-full cursor-pointer h-full"
+                                        >
                                           <div className="border-[#cdcdcd] min-h-[104px] border-[2px] rounded-[16px] min-w-0 pb-[16px] pt-[16px] cursor-pointer">
                                             <div className="iFc min-h-[48px] w-full min-w-0 justify-between flex-row flex cursor-pointer">
                                               <div className="max-h-[146px] mr-[16px] ml-[16px] flex-1 min-h-0 min-w-0 overflow-auto flex-col flex iFc cursor-pointer">
                                                 <div>
                                                   <div>
                                                     <div className="text-[16px] relative w-full h-full iFc">
-                                                      <div className="left-0 text-left text-[#767676] font-normal pointer-events-none absolute z-0 text-[16px]">
-                                                        <div className="whitespace-pre-wrap text-left">
-                                                          Add a detailed
-                                                          description
-                                                        </div>
+                                                      <div className="left-0 text-left text-[#767676] font-normal absolute z-0 text-[16px]">
+                                                        <div className="whitespace-pre-wrap text-left pointer-events-none break-words"></div>
                                                       </div>
-                                                      <div className="relative h-full"></div>
+                                                      <input
+                                                        className="overflow-hidden block rounded-none w-[500px] border-none"
+                                                        type="text"
+                                                        value={description}
+                                                        onChange={(e) =>
+                                                          setDescription(
+                                                            e.target.value
+                                                          )
+                                                        }
+                                                      />
                                                     </div>
                                                   </div>
                                                 </div>
@@ -413,6 +485,10 @@ const CreatePage = () => {
                                                 placeholder="Add a link"
                                                 type="url"
                                                 className="rounded-[16px] py-[12px] px-[16px] text-[16px] min-h[48px] max-w-[100%] overflow-hidden overflow-ellipsis whitespace-nowrap iFc w-full text-[#111] bg-[#fff] border-[2px]"
+                                                value={link}
+                                                onChange={(e) =>
+                                                  setLink(e.target.value)
+                                                }
                                               />
                                             </div>
                                           </span>
@@ -428,30 +504,18 @@ const CreatePage = () => {
                                           <div className="w-full">
                                             <div className="rounded-[8px] relative w-full">
                                               <div className="w-full items-center text-[12px] flex flex-row m-0">
-                                                <button
+                                                <select
+                                                  value={board}
+                                                  onChange={(e) =>
+                                                    setBoard(e.target.value)
+                                                  }
                                                   aria-invalid="false"
                                                   className="items-center bg-[#fff] border-[2px] cursor-pointer flex grow h-[48px] justify-between min-w-0 outline-none relative rounded-[16px] py-0 px-[14px] pointer-events-auto iFc m-0 align-middle"
                                                 >
-                                                  <div className="min-w-0 mr-[8px] items-center overflow-hidden">
-                                                    <div className="text-left max-w-[100%] overflow-hidden break-words font-normal iFc text-[16px] text-[#111] cursor-pointer">
-                                                      <span className="text-gray-500 text-left break-words font-normal iFc text-[16px]">
-                                                        Choose a board
-                                                      </span>
-                                                    </div>
-                                                  </div>
-                                                  <div className="mr-[-4px] flex-grow-0 flex-shrink-0">
-                                                    <svg
-                                                      className="text-[#111] stroke-none align-middle cursor-pointer"
-                                                      height="12"
-                                                      width="12"
-                                                      viewBox="0 0 24 24"
-                                                      aria-label="Choose a board"
-                                                      role="img"
-                                                    >
-                                                      <path d="M20.16 6.65 12 14.71 3.84 6.65a2.27 2.27 0 0 0-3.18 0 2.2 2.2 0 0 0 0 3.15L12 21 23.34 9.8a2.2 2.2 0 0 0 0-3.15 2.26 2.26 0 0 0-3.18 0"></path>
-                                                    </svg>
-                                                  </div>
-                                                </button>
+                                                  <option value="1">1</option>
+                                                  <option value="2">2</option>
+                                                  <option value="3">3</option>
+                                                </select>
                                               </div>
                                             </div>
                                           </div>
@@ -480,7 +544,10 @@ const CreatePage = () => {
                                               id="storyboard-selector-interest-tags"
                                               placeholder="Search for a tag"
                                               type="text"
-                                              value=""
+                                              value={tag}
+                                              onChange={(e) =>
+                                                setTag(e.target.value)
+                                              }
                                             />
                                           </div>
                                           <div className="mt-[8px]">
@@ -621,7 +688,7 @@ const CreatePage = () => {
                                 </div>
                               </div>
                             </div>
-                            {selectedFile ? (
+                            {file ? (
                               ""
                             ) : (
                               <div className="z-20 mt-[24px] ml-0 mr-0 mb-0 left-0 bottom-0 right-0 top-0 absolute flex flex-row bg-white bg-opacity-80"></div>
@@ -636,186 +703,8 @@ const CreatePage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
-
-    // <div className="grid grid-cols-12 border-2 mt-[100px]">
-    //   {isOpen ? (
-    //     <div className="col-span-3 p-2">
-    //       <div className="p-1">
-    //         <div className="flex">
-    //           <h1 className="text-lg mt-[10px]">
-    //             <b>Bản Nháp Ghim</b>
-    //           </h1>
-    //           <div className="pl-[150px]">
-    //             <button
-    //               onClick={toggleSidebar}
-    //               className="hover:bg-slate-200 rounded-full p-2"
-    //             >
-    //               <MdKeyboardDoubleArrowLeft fontSize="30px" />
-    //             </button>
-    //           </div>
-    //         </div>
-    //         <div className="bg-slate-200 hover:bg-slate-300 rounded-full text-center p-2 mt-3 mb-3 cursor-pointer">
-    //           <b>
-    //             <button>Tạo mới</button>
-    //           </b>
-    //         </div>
-    //         <div></div>
-    //       </div>
-    //     </div>
-    //   ) : (
-    //     <div className="ml-[40px] mt-[10px]">
-    //       <button
-    //         onClick={toggleSidebar}
-    //         className="hover:bg-slate-200 rounded-full p-2"
-    //       >
-    //         <MdKeyboardDoubleArrowRight fontSize="30px" />
-    //       </button>
-    //       <button className="hover:bg-slate-200 rounded-full p-2 mt-[30px]">
-    //         <FaPlus fontSize="30px" />
-    //       </button>
-    //     </div>
-    //   )}
-    //   <div className={`${isOpen ? "col-span-9" : "col-span-11"} border-l-2`}>
-    //     <div className="w-auto flex border border-slate-400">
-    //       <b>
-    //         <h3 className="p-5 text-lg w-full">Tạo ghim</h3>
-    //       </b>
-    //       <div className="justify-end w-full flex h-[100%] items-center box-border right-0 top-0 flex-row">
-    //         <div className="relative box-border block">
-    //           <span className="mt-[30px]">Changes stored!</span>
-    //         </div>
-
-    //         <div className="iFc box-border relative flex min-w-[60px] min-h-[48px] justify-center content-center items-center ">
-    //           <button
-    //             className="text-white font-medium p-[12px] border  bg-[#E60023] hover:bg-[#9b0000] rounded-full"
-    //             type="button"
-    //           >
-    //             Publish
-    //           </button>
-    //         </div>
-    //       </div>
-    //     </div>
-
-    //     <div className="flex">
-    //       <div className="flex justify-center items-center w-[400px] pt-[20px] pl-[50px]">
-    //         {selectedFile ? (
-    //           <img
-    //             src={URL.createObjectURL(selectedFile)}
-    //             alt="Selected file"
-    //             className="max-w-full h-auto rounded-[25px] mt-[-130px]"
-    //           />
-    //         ) : (
-    //           <label
-    //             htmlFor="dropzone-file"
-    //             className="flex flex-col items-center justify-center w-full h-[450px] border-2 border-gray-300 border-dashed rounded-[30px] cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-    //           >
-    //             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-    //               <svg
-    //                 className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-    //                 aria-hidden="true"
-    //                 xmlns="http://www.w3.org/2000/svg"
-    //                 fill="none"
-    //                 viewBox="0 0 20 16"
-    //               >
-    //                 <path
-    //                   stroke="currentColor"
-    //                   strokeLinecap="round"
-    //                   strokeLinejoin="round"
-    //                   strokeWidth="2"
-    //                   d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-    //                 />
-    //               </svg>
-    //               <p className="mb-0 text-sm text-gray-500 dark:text-gray-400 text-right ">
-    //                 Chọn một tệp hoặc kéo thả tệp vào đây
-    //               </p>
-    //               <p className="text-xs text-gray-500 dark:text-gray-400 text-center ">
-    //                 Bạn nên sử dụng tập tin .jpg chất lượng cao có kích thước
-    //                 dưới 20MB hoặc tập tin .mp4 chất lượng cao có kích thước
-    //                 dưới 200MB.
-    //               </p>
-    //             </div>
-    //             <input
-    //               id="dropzone-file"
-    //               type="file"
-    //               className="hidden"
-    //               onChange={handleFileChange}
-    //             />
-    //           </label>
-    //         )}
-    //       </div>
-    //       <form action="">
-    //         <div className="grid gap-3 pt-[20px] pl-[50px]">
-    //           <div className="w-[600px]">
-    //             <label htmlFor="tieude" className="text-sm font-medium">
-    //               Tiêu đề
-    //             </label>
-    //             <input
-    //               type="text"
-    //               className="w-full p-3 rounded-xl border-2 hover:border-slate-300 "
-    //               placeholder="Thêm tiêu đề"
-    //               required
-    //             />
-    //           </div>
-    //           <div className="w-[600px]">
-    //             <label htmlFor="mota" className="text-sm font-medium">
-    //               Mô tả
-    //             </label>
-    //             <input
-    //               type="text"
-    //               className="w-full p-3 rounded-xl border-2 hover:border-slate-300 pb-[100px]"
-    //               placeholder="Thêm mô tả chi tiết"
-    //               required
-    //             />
-    //           </div>
-    //           <div className="w-[600px] pt-[20px]">
-    //             <label htmlFor="lienket" className="text-sm font-medium">
-    //               Liên kết
-    //             </label>
-    //             <input
-    //               type="text"
-    //               className="w-full p-3 rounded-xl border-2 hover:border-slate-300 "
-    //               placeholder="Thêm liên kết"
-    //               required
-    //             />
-    //           </div>
-    //           <div className="w-[600px]">
-    //             <label htmlFor="tieude" className="text-sm font-medium">
-    //               Bảng
-    //             </label>
-    //             <select className="w-full p-3 rounded-xl border-2 hover:border-slate-300 ">
-    //               <option defaultValue={"Choose a country"}>
-    //                 Choose a country
-    //               </option>
-    //               <option value="US">United States</option>
-    //               <option value="CA">Canada</option>
-    //               <option value="FR">France</option>
-    //               <option value="DE">Germany</option>
-    //             </select>
-    //           </div>
-    //           <div className="w-[600px]">
-    //             <label htmlFor="ganthe" className="text-sm font-medium">
-    //               Chủ đề được gắn thẻ (0)
-    //             </label>
-    //             <input
-    //               type="text"
-    //               className="w-full p-3 rounded-xl border-2 hover:border-slate-300 "
-    //               placeholder="Tìm kiếm thẻ"
-    //               required
-    //             />
-    //             <p className="text-sm">
-    //               Đừng lo, mọi người sẽ không nhìn thấy thẻ của bạn
-    //             </p>
-    //           </div>
-    //           <div>
-    //             <p>Tùy chọn khác</p>
-    //           </div>
-    //         </div>
-    //       </form>
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 
