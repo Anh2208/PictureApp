@@ -1,14 +1,26 @@
 "use client";
-import Link from "next/link";
-import NavbarProfile from "../components/navbarProfile";
+import NavbarProfile from "@/app/components/navbarProfile";
+import { FaQuestion } from "react-icons/fa";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  MouseEventHandler,
+  use,
+} from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AvatarChange from "@/app/components/AvatarChange";
 
 interface User {
   image: string;
   name: string;
   firstname: string;
   lastname: string;
+  username: string;
+  about: string;
+  website: string;
 }
 
 const getData = async (email: string) => {
@@ -26,15 +38,27 @@ const getData = async (email: string) => {
 const Settings = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [about, setAbout] = useState("");
+  const [website, setWebsite] = useState("");
+  const [changImage, setChangeImage] = useState(false);
   const { data: session } = useSession();
-  const [user, setUser] = useState<User | null>();
-
+  const [userName, setUserName] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [initialUser, setInitialUser] = useState<User | null>(null);
   useEffect(() => {
     const fetchData = async () => {
       if (session?.user?.email) {
         try {
           const userData = await getData(session.user.email);
           setUser(userData);
+          setUserName(userData.username);
+          setFirstName(userData.firstname);
+          setLastName(userData.lastname);
+          setAbout(userData.about);
+          setWebsite(userData.website);
+          setInitialUser(userData);
+          console.log("user dat ", userData);
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -43,95 +67,258 @@ const Settings = () => {
 
     fetchData();
   }, [session]);
-  console.log("user", user);
-  return (
-    <div className="grid grid-cols-12 p-3 h-[1000px] pt-[80px] overflow-x-hidden">
-      <NavbarProfile />
 
-      <div className="col-span-9">
-        <div className="mt-9">
-          <h1 className="text-wrap font-medium text-3xl">Chỉnh sửa hồ sơ</h1>
+  const handleFirstNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFirstName(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
+    },
+    [initialUser?.firstname]
+  );
+
+  const handleLastNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setLastName(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
+    },
+    [initialUser?.lastname]
+  );
+
+  const handleUserNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setUserName(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
+    },
+    [initialUser?.username]
+  );
+
+  const handleAboutChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setAbout(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
+    },
+    [initialUser?.about]
+  );
+
+  const handleWebsiteChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setWebsite(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
+    },
+    [initialUser?.website]
+  );
+
+  const handlerSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.preventDefault();
+
+    if (!hasChanges) {
+      return;
+    }
+    console.log("1", firstName);
+    console.log("2", about);
+    console.log("3", website);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/user/${session?.user?.email}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstname: firstName,
+            lastname: lastName,
+            username: userName,
+            about: about,
+            website: website,
+          }),
+        }
+      );
+      console.log(response);
+      if (response.ok) {
+        console.log("newuwer is", response);
+        toast.success("Xác thực dữ liệu thành công!!!");
+        // Cập nhật thành công
+        setInitialUser({
+          firstname: firstName,
+          lastname: lastName,
+          username: userName,
+          image: user?.image || "",
+          name: "",
+          website: website,
+          about: about,
+        }); // Cập nhật giá trị ban đầu mới
+        setHasChanges(false);
+      } else {
+        const errorData = await response.json();
+        if (errorData.message == "The website link is incorrect") {
+          toast.error("Lỗi, đường dẫn của website không chính xác");
+        } else {
+          toast.error(errorData.message);
+        }
+      }
+    } catch (error) {
+      console.log("Error updating user:", error);
+      toast.error("Something went wrong");
+    }
+  };
+
+  return (
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+      />
+      {changImage == true && (
+        <AvatarChange onClose={() => setChangeImage(false)} />
+      )}
+      <div className="container grid grid-cols-12 p-3 h-[1000px] pt-[80px]">
+        <NavbarProfile />
+        <div className="col-span-9">
+          <div className="mt-9">
+            <h1 className="text-wrap font-medium text-[28px] iFc">
+              Chỉnh sửa hồ sơ
+            </h1>
+          </div>
+          <div className="w-[500px] mt-3 font-sans">
+            Hãy giữ riêng tư thông tin cá nhân của bạn. Thông tin bạn thêm vào
+            đây hiển thị cho bất kỳ ai có thể xem hồ sơ của bạn.
+          </div>
+          <form>
+            <div className="pt-5">
+              <span className="font-normal text-slate-500 text-sm">Ảnh</span>
+              <div className="flex">
+                <img
+                  src={user?.image}
+                  alt=""
+                  className="rounded-full w-[80px] h-[80px] object-cover"
+                />
+                <span className="mt-6 pl-6">
+                  <p
+                    className="font-medium bg-slate-200 hover:bg-slate-300 p-[10px] rounded-[50px] cursor-pointer"
+                    onClick={() => setChangeImage((prev) => !prev)}
+                  >
+                    Thay đổi
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="flex flex-row">
+                <span className="text-[12px]">Tên</span>
+                <input
+                  type="text"
+                  name="ten"
+                  defaultValue={user?.lastname}
+                  onChange={handleLastNameChange}
+                  className="flex p-3 mt-5 rounded-[20px] ml-[-35px] mr-[35px] border border-slate-300 hover:border-slate-400"
+                />
+                <span className="text-[12px]">Họ</span>
+                <input
+                  type="text"
+                  name="ho"
+                  defaultValue={user?.firstname}
+                  onChange={handleFirstNameChange}
+                  className="flex p-3 mt-5 ml-[-35px] rounded-[20px] border border-slate-300 hover:border-slate-400"
+                />
+              </div>
+              <div className="mt-5">
+                <span className="text-[12px]">Giới thiệu</span>
+                <input
+                  type="text"
+                  name="gioithieu"
+                  defaultValue={user?.about}
+                  onChange={handleAboutChange}
+                  className="flex p-3 w-[500px] ml-[-17px] pb-[70px] rounded-[20px] border border-slate-300 hover:border-slate-400"
+                  placeholder="Kể câu chuyện của bạn"
+                />
+              </div>
+              <div className="mt-5">
+                <span className="text-[12px]">Trang web</span>
+                <input
+                  type="text"
+                  name="trangweb"
+                  defaultValue={user?.website}
+                  onChange={handleWebsiteChange}
+                  className="flex p-3 w-[500px] ml-[-17px] rounded-[20px] border border-slate-300 hover:border-slate-400"
+                  placeholder="Thêm liên kết để hướng lưu lượng vào website"
+                />
+              </div>
+              <div className="mt-5">
+                <span className="text-[12px]">Tên người dùng</span>
+                <input
+                  type="text"
+                  name="tennguoidung"
+                  defaultValue={user?.username}
+                  onChange={handleUserNameChange}
+                  className="flex p-3 w-[500px] ml-[-17px] rounded-[20px] border border-slate-300 hover:border-slate-400"
+                  placeholder="Hãy chọn thật khéo để người khác có thể tìm thấy bạn"
+                />
+              </div>
+            </div>
+          </form>
         </div>
-        <div className="w-[500px] mt-3 font-sans">
-          Hãy giữ riêng tư thông tin cá nhân của bạn. Thông tin bạn thêm vào đây
-          hiển thị cho bất kỳ ai có thể xem hồ sơ của bạn.
-        </div>
-        <form action="">
-          <div className="pt-5">
-            <span className="font-normal text-slate-500 text-sm">Ảnh</span>
-            <div className="flex">
-              <img
-                src="https://i.pinimg.com/140x140_RS/9c/52/19/9c5219882ca65442bd90d3ced0adbfd7.jpg"
-                alt=""
-                className="rounded-full w-[80px]"
-              />
-              <span className="mt-6 pl-6 ">
-                <p className="font-medium bg-slate-200 hover:bg-slate-300 p-[10px] rounded-[50px] cursor-pointer">
-                  Thay đổi
-                </p>
-              </span>
+        <div className="w-full fixed bg-slate-50 bottom-0 p-3 left-0 right-0 b_shadow">
+          <div className="justify-center items-center content-center">
+            <div className="flex justify-center">
+              <p className="bg-customColor-color_background_button_secondary_default text-center p-4 text-slate-500 font-medium rounded-[25px] cursor-pointer">
+                Thiết lập lại
+              </p>
+              <button
+                onClick={handlerSubmit}
+                className={`${
+                  hasChanges
+                    ? "bg-customColor-color_red_pushpin_450 cursor-pointer text-white iFc"
+                    : "bg-customColor-color_background_button_secondary_default cursor-not-allowed"
+                } text-center p-4 text-slate-500 font-medium rounded-[25px] ml-[20px]`}
+              >
+                Lưu
+              </button>
+              <div className="w-14 h-14 ">
+                <FaQuestion className="hover:bg-[#e9e9e9] shadow-lg cursor-pointer w-14 h-14 p-3 rounded-full absolute right-1 top-1/2 transform -translate-y-1/2 " />
+              </div>
             </div>
           </div>
-          <div className="mt-4">
-            <div className="flex flex-row">
-              <span className="text-[12px]">Tên</span>
-              <input
-                type="text"
-                name="ten"
-                defaultValue={user?.lastname}
-                onChange={(e) => setLastName(e.target.value)}
-                className="flex p-3 mt-5 rounded-[20px] ml-[-35px] mr-[35px] border border-slate-300 hover:border-slate-400"
-              />
-              <span className="text-[12px]">Họ</span>
-              <input
-                type="text"
-                name="ho"
-                defaultValue={user?.firstname}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="flex p-3 mt-5 ml-[-35px] rounded-[20px] border border-slate-300 hover:border-slate-400"
-              />
-            </div>
-            <div className="mt-5">
-              <span className="text-[12px]">Giới thiệu</span>
-              <input
-                type="text"
-                name="gioithieu"
-                className="flex p-3 w-[500px] ml-[-17px] pb-[70px] rounded-[20px] border border-slate-300 hover:border-slate-400"
-                placeholder="Kể câu chuyện của bạn"
-              />
-            </div>
-            <div className="mt-5">
-              <span className="text-[12px]">Trang web</span>
-              <input
-                type="text"
-                name="trangweb"
-                className="flex p-3 w-[500px] ml-[-17px] rounded-[20px] border border-slate-300 hover:border-slate-400"
-                placeholder="Thêm liên kết để hướng lưu lượng vào website"
-              />
-            </div>
-            <div className="mt-5">
-              <span className="text-[12px]">Tên người dùng</span>
-              <input
-                type="text"
-                name="tennguoidung"
-                className="flex p-3 w-[500px] ml-[-17px] rounded-[20px] border border-slate-300 hover:border-slate-400"
-                placeholder="Hãy chọn thật khéo để người khác có thể tìm thấy bạn"
-              />
-            </div>
-          </div>
-        </form>
-      </div>
-      <div className="fixed bg-slate-50 w-full bottom-0 p-3 left-0 right-0">
-        <div className="flex items-center justify-center">
-          <p className="bg-gray-200 p-4 text-slate-500 font-medium rounded-[25px] cursor-pointer">
-            Thiết lập lại
-          </p>
-          <p className="bg-gray-200 p-4 text-slate-500 font-medium rounded-[25px] ml-[20px] cursor-pointer">
-            Lưu
-          </p>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 export default Settings;

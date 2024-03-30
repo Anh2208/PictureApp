@@ -25,17 +25,18 @@ const AvatarChange = ({ onClose }: ChangeState) => {
       }
     );
     const resData = await res.json();
+    console.log("url new is", resData);
     return resData.url;
   };
 
   const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation(); // Ngăn chặn sự kiện lan truyền lên phần tử cha
+    // event.stopPropagation(); // Ngăn chặn sự kiện lan truyền lên phần tử cha
     const fileInput = document.getElementById("file-input");
     fileInput?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.stopPropagation(); // Ngăn chặn sự kiện lan truyền lên phần tử cha
+    // event.stopPropagation(); // Ngăn chặn sự kiện lan truyền lên phần tử cha
     const newfile = event.target.files?.[0];
     if (newfile) {
       setFile(newfile);

@@ -19,6 +19,8 @@ interface User {
   firstname: string;
   lastname: string;
   username: string;
+  about: string;
+  website: string;
 }
 
 const getData = async (email: string) => {
@@ -36,13 +38,14 @@ const getData = async (email: string) => {
 const EditProfile = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [about, setAbout] = useState("");
+  const [website, setWebsite] = useState("");
   const [changImage, setChangeImage] = useState(false);
   const { data: session } = useSession();
   const [userName, setUserName] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const [initialUser, setInitialUser] = useState<User | null>(null);
-  console.log("sesssi ", session);
   useEffect(() => {
     const fetchData = async () => {
       if (session?.user?.email) {
@@ -52,7 +55,10 @@ const EditProfile = () => {
           setUserName(userData.username);
           setFirstName(userData.firstname);
           setLastName(userData.lastname);
+          setAbout(userData.about);
+          setWebsite(userData.website);
           setInitialUser(userData);
+          console.log("user dat ", userData);
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -64,47 +70,80 @@ const EditProfile = () => {
 
   const handleFirstNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
-      setFirstName(newValue);
-      setHasChanges(newValue !== initialUser?.firstname);
-      if (newValue === "" && initialUser?.firstname === null)
-        setHasChanges(false);
+      setFirstName(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
     },
     [initialUser?.firstname]
   );
 
   const handleLastNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
-      setLastName(newValue);
-      setHasChanges(newValue !== initialUser?.lastname);
-      if (newValue === "" && initialUser?.lastname === null)
-        setHasChanges(false);
+      setLastName(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
     },
     [initialUser?.lastname]
   );
 
   const handleUserNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
-      setUserName(newValue);
-      setHasChanges(newValue !== initialUser?.username);
-      if (newValue === "" && initialUser?.username === null)
-        setHasChanges(false);
+      setUserName(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
     },
     [initialUser?.username]
+  );
+
+  const handleAboutChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setAbout(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
+    },
+    [initialUser?.about]
+  );
+
+  const handleWebsiteChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setWebsite(e.target.value);
+      setHasChanges(
+        e.target.value !== initialUser?.firstname
+          ? true
+          : e.target.value === "" && initialUser?.firstname === null
+          ? false
+          : hasChanges
+      );
+    },
+    [initialUser?.website]
   );
 
   const handlerSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
 
     if (!hasChanges) {
-      // Không có thay đổi, không cần cập nhật
       return;
     }
-    console.log("1", firstName);
-    console.log("2", lastName);
-    console.log("3", userName);
     try {
       const response = await fetch(
         `http://localhost:3000/api/user/${session?.user?.email}`,
@@ -117,9 +156,12 @@ const EditProfile = () => {
             firstname: firstName,
             lastname: lastName,
             username: userName,
+            about: about,
+            website: website,
           }),
         }
       );
+      console.log(response);
       if (response.ok) {
         console.log("newuwer is", response);
         toast.success("Xác thực dữ liệu thành công!!!");
@@ -130,13 +172,20 @@ const EditProfile = () => {
           username: userName,
           image: user?.image || "",
           name: "",
+          website: website,
+          about: about,
         }); // Cập nhật giá trị ban đầu mới
         setHasChanges(false);
       } else {
-        toast.error("Something went wrong");
+        const errorData = await response.json();
+        if (errorData.message == "The website link is incorrect") {
+          toast.error("Lỗi, đường dẫn của website không chính xác");
+        } else {
+          toast.error(errorData.message);
+        }
       }
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.log("Error updating user:", error);
       toast.error("Something went wrong");
     }
   };
@@ -212,6 +261,8 @@ const EditProfile = () => {
                 <input
                   type="text"
                   name="gioithieu"
+                  defaultValue={user?.about}
+                  onChange={handleAboutChange}
                   className="flex p-3 w-[500px] ml-[-17px] pb-[70px] rounded-[20px] border border-slate-300 hover:border-slate-400"
                   placeholder="Kể câu chuyện của bạn"
                 />
@@ -221,6 +272,8 @@ const EditProfile = () => {
                 <input
                   type="text"
                   name="trangweb"
+                  defaultValue={user?.website}
+                  onChange={handleWebsiteChange}
                   className="flex p-3 w-[500px] ml-[-17px] rounded-[20px] border border-slate-300 hover:border-slate-400"
                   placeholder="Thêm liên kết để hướng lưu lượng vào website"
                 />

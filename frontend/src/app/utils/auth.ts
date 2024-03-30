@@ -95,14 +95,26 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (existingUser) {
-          await prisma.user.update({
-            where: { email: token.email },
-            data: { username: newusername },
-          });
-          return {
-            ...token,
-            username: newusername,
-          };
+          if (existingUser.username == null) {
+            await prisma.user.update({
+              where: { email: token.email },
+              data: { username: newusername },
+            });
+            return {
+              ...token,
+              username: newusername,
+            };
+          }
+          if (existingUser.lastname == null) {
+            await prisma.user.update({
+              where: { email: token.email },
+              data: { lastname: existingUser.name },
+            });
+            return {
+              ...token,
+              name: existingUser.name,
+            };
+          }
         }
       }
       if (user) {
