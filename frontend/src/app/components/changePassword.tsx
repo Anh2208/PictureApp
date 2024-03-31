@@ -36,6 +36,7 @@ const ChangePassword = ({ onClose }: ChangeState) => {
   const [passwordOld, setPasswordOld] = useState("");
   const [passwordNew, setPasswordNew] = useState("");
   const [passwordNewConfirm, setPasswordNewConfirm] = useState("");
+  const [initialInputOld, setInitialInputOld] = useState(false);
   const [initialInputNew, setInitialInputNew] = useState(false);
   const [initialInputNewConfirm, setInitialInputNewConfirm] = useState(false);
   const [matchPassword, setMatchPassword] = useState(false);
@@ -68,6 +69,9 @@ const ChangePassword = ({ onClose }: ChangeState) => {
   const handlerPasswordOld = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setPasswordOld(e.target.value);
+      if (initialInputOld == false) {
+        setInitialInputOld(true);
+      }
     },
     [passwordOld]
   );
@@ -216,6 +220,28 @@ const ChangePassword = ({ onClose }: ChangeState) => {
                             </div>
                           </div>
                         </div>
+                        {passwordOld == "" && initialInputOld ? (
+                          <div className="mt-2 box-border">
+                            <div className="text-red-600 break-words font-normal iFc text-[12px]">
+                              <span className="text-left text-red-600 break-words font-normal iFc text-[12px]">
+                                <div className="items-center flex flex-row">
+                                  <div className="m-1">
+                                    <svg
+                                      className="h-[20px] w-[20px] fill-red-500"
+                                      viewBox="0 0 24 24"
+                                      aria-hidden="true"
+                                      aria-label=""
+                                      role="img"
+                                    >
+                                      <path d="M23.6 18.5 14.63 2.53a3 3 0 0 0-5.24 0L.4 18.5A3.02 3.02 0 0 0 3 23h18a3 3 0 0 0 2.6-4.5m-7.54-1.06a1.5 1.5 0 0 1 0 2.12 1.5 1.5 0 0 1-2.12 0L12 17.62l-1.95 1.94a1.5 1.5 0 0 1-2.12 0 1.5 1.5 0 0 1 0-2.12l1.94-1.94-1.94-1.94a1.5 1.5 0 0 1 0-2.12 1.5 1.5 0 0 1 2.12 0L12 13.38l1.94-1.94a1.5 1.5 0 0 1 2.12 0 1.5 1.5 0 0 1 0 2.12l-1.94 1.94z"></path>
+                                    </svg>
+                                  </div>
+                                  <div className="m-1">Bắt buộc</div>
+                                </div>
+                              </span>
+                            </div>
+                          </div>
+                        ) : null}
                       </span>
                     </div>
                   </div>
@@ -452,7 +478,7 @@ const ChangePassword = ({ onClose }: ChangeState) => {
                     </button>
                   </div>
                   <div className="px-1 box-border block">
-                    {matchPassword ? (
+                    {matchPassword && passwordOld != "" ? (
                       <button
                         className="min-w-[60px] box-border inline-block p-0 rounded-[24px] cursor-pointer"
                         onClick={handlerSubmit}

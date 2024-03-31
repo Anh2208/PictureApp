@@ -123,3 +123,23 @@
   background-color: #ffffff;
   /* Màu nền của hình tròn khi được chọn */
 }
+
+.ExperienceHero-enter {
+  opacity: 0;
+  transform: translateY(-50px);
+}
+
+.ExperienceHero-enter-active {
+  opacity: 1;
+  transform: none;
+  transition: all 400ms ease-out;
+}
+
+.ExperienceHero-exit {
+  opacity: 1;
+}
+
+.ExperienceHero-exit-active {
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
