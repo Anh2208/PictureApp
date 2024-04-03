@@ -9,6 +9,17 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        chase: {
+          "0%, 100%": { transform: "translateY(0) scale(0)" },
+          "25%": { transform: "translateY(-12px) scale(1)" },
+          "50%": { transform: "translateX(12px) scale(1)" },
+          "75%": { transform: "translateY(12px) scale(1)" },
+        },
+      },
+      animation: {
+        chase: "chase 2s linear infinite",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -35,16 +46,19 @@ const config: Config = {
           color_border_container: "#cdcdcd",
           color_red_pushpin_450: "#e60023",
           color_text_subtle: "#767676",
+          color_gray_roboflow_200: "#e9e9e9",
           400: "#9ca3af",
           500: "#6b7280",
           600: "#4b5563",
           700: "#374151",
           800: "#1f2937",
           900: "#111827",
+          9197: "#9197a3",
         },
       },
     },
   },
+  variants: {},
   plugins: [],
 };
 export default config;

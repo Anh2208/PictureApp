@@ -143,3 +143,24 @@
   opacity: 0;
   transition: opacity 400ms ease-out;
 }
+
+.rounded-tl {
+  border-top-left-radius: 10px;
+  /* Thay đổi giá trị 10px theo nhu cầu của bạn */
+}
+
+.bg-image-heart {
+  background-image: url(https://s.pinimg.com/webapp/loveGrid-1ec7b8e4.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 19px;
+  width: 19px;
+}
+
+.bg-image-heart-no-color {
+  background-image: url(https://s.pinimg.com/webapp/reactionHeartOutline-24ab75a6.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 24px;
+  width: 24px;
+}
