@@ -120,6 +120,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         return {
           ...token,
+          id: user.id,
           image: user.image,
           username: user.username,
         };
@@ -127,7 +128,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // console.log("ahahahah", token);
+      console.log("ahahahah", token);
 
       // if (!token.username && session?.user.email) {
       //   const emailParts = session?.user.email.split("@");
@@ -148,6 +149,7 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
+          id: token.id,
           username: token.username,
           image: token.picture,
         },

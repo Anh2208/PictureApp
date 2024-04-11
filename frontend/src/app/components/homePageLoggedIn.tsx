@@ -1,6 +1,6 @@
 "use client";
-
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface PostData {
   id: string;
@@ -31,8 +31,6 @@ const HomePageLoggedIn = () => {
         const response = await getData();
         if (response) {
           setPostData(response);
-        } else {
-          // Handle the case when the response is empty
         }
       } catch (error) {
         throw new Error("Fetch post data failed");
@@ -40,8 +38,6 @@ const HomePageLoggedIn = () => {
     };
     fetchData();
   }, []);
-
-  console.log("post data is", postData);
 
   return (
     <>
@@ -53,14 +49,15 @@ const HomePageLoggedIn = () => {
                 <div className=" 2xl:columns-6 xl:columns-5 lg:columns-4 md:columns-3 sm:columns-2 h-auto relative mx-[10px] my-0">
                   {postData &&
                     postData.map((post, index) => (
-                      <div
-                        key={index}
-                        className="h-auto mt-2 w-[236px]"
-                        // style={{ transform: `translate(auto, 0)` }}
-                      >
+                      <div key={index} className="h-auto mt-2 w-[236px]">
                         <div className=" rounded-[16px] h-full relative flex flex-col box-border overflow-hidden">
                           <div className=" rounded-[16px] relative overflow-hidden"></div>
-                          <a href={post.link} className="rounded-[8px]">
+                          <Link
+                            href={`/pin/${post.id}`}
+                            passHref
+                            className="rounded-[8px]"
+                          >
+                            {/* <a className="rounded-[8px]"> */}
                             <div className="min-h-[55px]">
                               <div className="min-h-[120px] items-center flex flex-row m-0 cursor-zoom-in">
                                 <div className="relative cursor-zoom-in">
@@ -72,7 +69,8 @@ const HomePageLoggedIn = () => {
                                 </div>
                               </div>
                             </div>
-                          </a>
+                            {/* </a> */}
+                          </Link>
                         </div>
                       </div>
                     ))}
@@ -88,95 +86,4 @@ const HomePageLoggedIn = () => {
 
 export default HomePageLoggedIn;
 
-{
-  /* <div className="transform translate-x-[271px] translate-y-0 h-auto top-0 left-0 absolute w-[236px]">
-                    <div className=" rounded-[16px] h-full relative flex flex-col box-border overflow-hidden">
-                      <div className=" rounded-[16px] relative overflow-hidden"></div>
-                      <a href="/" className="bg-red-300 rounded-[8px]">
-                        <div className="min-h-[55px]">
-                          <div className="min-h-[120px] items-center flex flex-row m-0 cursor-zoom-in">
-                            <div className=" bg-black relative cursor-zoom-in">
-                              <img
-                                src="https://i.pinimg.com/564x/55/46/fd/5546fdb5793a4ce561736872d6be30de.jpg"
-                                alt=""
-                                className=" w-full cursor-zoom-in"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                  <div className="transform translate-x-[523px] translate-y-0 h-auto top-0 left-0 absolute w-[236px]">
-                    <div className=" rounded-[16px] h-full relative flex flex-col box-border overflow-hidden">
-                      <div className=" rounded-[16px] relative overflow-hidden"></div>
-                      <a href="/" className="bg-red-300 rounded-[8px]">
-                        <div className="min-h-[55px]">
-                          <div className="min-h-[120px] items-center flex flex-row m-0 cursor-zoom-in">
-                            <div className=" bg-black relative cursor-zoom-in">
-                              <img
-                                src="https://i.pinimg.com/564x/55/46/fd/5546fdb5793a4ce561736872d6be30de.jpg"
-                                alt=""
-                                className=" w-full cursor-zoom-in"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                  <div className="transform translate-x-[775px] translate-y-0 h-auto top-0 left-0 absolute w-[236px]">
-                    <div className=" rounded-[16px] h-full relative flex flex-col box-border overflow-hidden">
-                      <div className=" rounded-[16px] relative overflow-hidden"></div>
-                      <a href="/" className="bg-red-300 rounded-[8px]">
-                        <div className="min-h-[55px]">
-                          <div className="min-h-[120px] items-center flex flex-row m-0 cursor-zoom-in">
-                            <div className=" bg-black relative cursor-zoom-in">
-                              <img
-                                src="https://i.pinimg.com/564x/55/46/fd/5546fdb5793a4ce561736872d6be30de.jpg"
-                                alt=""
-                                className=" w-full cursor-zoom-in"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                  <div className="transform translate-x-[1027px] translate-y-0 h-auto top-0 left-0 absolute w-[236px]">
-                    <div className=" rounded-[16px] h-full relative flex flex-col box-border overflow-hidden">
-                      <div className=" rounded-[16px] relative overflow-hidden"></div>
-                      <a href="/" className="bg-red-300 rounded-[8px]">
-                        <div className="min-h-[55px]">
-                          <div className="min-h-[120px] items-center flex flex-row m-0 cursor-zoom-in">
-                            <div className=" bg-black relative cursor-zoom-in">
-                              <img
-                                src="https://i.pinimg.com/564x/55/46/fd/5546fdb5793a4ce561736872d6be30de.jpg"
-                                alt=""
-                                className=" w-full cursor-zoom-in"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                  <div className="transform translate-x-[1279px] translate-y-0 h-auto top-0 left-0 absolute w-[236px]">
-                    <div className=" rounded-[16px] h-full relative flex flex-col box-border overflow-hidden">
-                      <div className=" rounded-[16px] relative overflow-hidden"></div>
-                      <a href="/" className="bg-red-300 rounded-[8px]">
-                        <div className="min-h-[55px]">
-                          <div className="min-h-[120px] items-center flex flex-row m-0 cursor-zoom-in">
-                            <div className=" bg-black relative cursor-zoom-in">
-                              <img
-                                src="https://i.pinimg.com/564x/55/46/fd/5546fdb5793a4ce561736872d6be30de.jpg"
-                                alt=""
-                                className=" w-full cursor-zoom-in"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  </div> */
-}
+// export default HomePageLoggedIn;

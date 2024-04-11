@@ -1,9 +1,155 @@
 "use client";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
-import { useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
+import EmojiPicker from "emoji-picker-react";
+import ReactComponent from "../../components/react";
+import { Post } from "@prisma/client";
+import { getSession, useSession } from "next-auth/react";
+
+interface EmojiClickData {
+  emoji: string;
+}
+
+interface User {
+  username: string;
+  image: string;
+  followers: number;
+  email: string;
+}
+
+const getDataPost = async (id: string) => {
+  const res = await fetch(`http://localhost:3000/api/post/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed!");
+  }
+
+  return res.json();
+};
+
+const getDataFollow = async (email: string) => {
+  const res = await fetch(`http://localhost:3000/api/user/follow/${email}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed!");
+  }
+
+  return res.json();
+};
 
 const PostId = () => {
   const [showMessage, setShowMessage] = useState(false);
+  const [emojiPicker, setEmojiPicker] = useState(false);
+  const [commentValue, setCommentValue] = useState("");
+  const [following, setFollowing] = useState(false);
+  const [Post, setPost] = useState<Post | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const { data: session, status } = useSession();
+
+  const handleEmojiClick = (emojiObject: EmojiClickData) => {
+    const addEmoji = emojiObject.emoji;
+
+    setCommentValue((prevInput) => prevInput + addEmoji);
+    setEmojiPicker(false);
+  };
+
+  // API Start
+  // Create comment
+  const handlerSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`http://localhost:3000/api/user/comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: Post?.id,
+          emailUser: session?.user?.email,
+          content: commentValue,
+        }),
+      });
+      console.log("result comment", response);
+    } catch (error) {
+      console.log("error create comment");
+    }
+  };
+
+  // Follow Action
+  const handlerSubmitFollow: MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`http://localhost:3000/api/user/follow`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailUserFollowing: session?.user?.email,
+          emailUserFollower: user?.email,
+        }),
+      });
+      console.log("result comment", response);
+    } catch (error) {
+      console.log("error create comment");
+    }
+  };
+
+  const handlerSubmitUnFollow: MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
+    e.preventDefault();
+
+    try {
+      await fetch(`http://localhost:3000/api/user/follow`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailUserFollowing: session?.user?.email,
+          emailUserFollower: user?.email,
+        }),
+      });
+    } catch (error) {
+      console.log("error create comment");
+    }
+  };
+
+  // API end
+  useEffect(() => {
+    const url = window.location.href;
+    const id = url.substring(url.lastIndexOf("/") + 1);
+    const fetchData = async () => {
+      const userFollowing = await getSession();
+      console.log(userFollowing);
+      try {
+        const response = await getDataPost(id);
+        if (response) {
+          setPost(response.post);
+          setUser(response.user);
+        }
+
+        const followList = await getDataFollow(response.user.email);
+        // Kiểm tra danh sách người theo dõi có chứa session.user.id hay không
+        const isFollowing = followList.some(
+          (item: any) => item.followingId === userFollowing?.user.id
+        );
+        console.log("fl list", isFollowing);
+        console.log("fl list", userFollowing?.user.id);
+        setFollowing(!isFollowing);
+      } catch (error) {
+        throw new Error("Fetch post data failed");
+      }
+    };
+    fetchData();
+  }, []);
+  console.log("sesssi ", session);
   return (
     <>
       {/* <LoadingSpinner /> */}
@@ -24,7 +170,7 @@ const PostId = () => {
                                   <div className=" bg-black box-border relative cursor-auto rounded-[32px]">
                                     <div className="relative ">
                                       <img
-                                        src="https://i.pinimg.com/originals/61/cf/e0/61cfe0e77de02761cb62c1efc385e599.jpg"
+                                        src={Post?.images}
                                         alt=""
                                         className="w-full h-auto rounded-l-[32px] relative"
                                       />
@@ -35,7 +181,7 @@ const PostId = () => {
                             </div>
                             <div className="w-[50%] h-full box-border flex flex-col">
                               <div className="pl-8 flex flex-auto flex-col">
-                                <div className="z-2 sticky cursor-auto">
+                                <div className="z-10 sticky cursor-auto top-[64px] bg-white">
                                   <div className="pt-8 pr-8 pl-0 min-h-[92px] box-border mt-0 bg-white">
                                     <div className="block box-border">
                                       <div className="flex flex-row m-0 justify-between">
@@ -115,7 +261,7 @@ const PostId = () => {
                                   </div>
                                 </div>
                                 <div className="flex flex-auto box-border overflow-auto flex-col">
-                                  <div className="flex flex-col m-0 cursor-pointer">
+                                  <div className="flex flex-col m-0">
                                     <div className="pr-[32px]">
                                       <div className="flex flex-row h-[16px]"></div>
                                     </div>
@@ -161,29 +307,53 @@ const PostId = () => {
                                                       >
                                                         <div className="max-w-[270px">
                                                           <div className="text-left break-words font-semibold iFc text-[14px]">
-                                                            GW Bird71
+                                                            {user?.username}
                                                           </div>
                                                         </div>
                                                       </a>
                                                     </div>
-                                                    <div className="px-1 flex flex-row cursor-pointer">
+                                                    <div className="px-1 flex flex-row">
                                                       <div className="text-left break-words font-normal iFc text-[14px]">
-                                                        20,6k người theo dõi
+                                                        {user?.followers} người
+                                                        theo dõi
                                                       </div>
                                                     </div>
                                                   </div>
                                                 </div>
                                               </div>
+
                                               <div className="flex">
-                                                <div className="flex flex-row relative">
-                                                  <button className="min-w-[60px] p-0 w-full rounded-[24px]">
-                                                    <div className="min-w-[60px] justify-center items-center flex min-h-[48px] px-4 py-3 w-full cursor-pointer bg-customColor-color_background_box_secondary rounded-[24px]">
-                                                      <div className="text-black text-center font-semibold iFc text-[16px]">
-                                                        Theo dõi
+                                                {following == true ? (
+                                                  <div className="flex flex-row relative">
+                                                    <button
+                                                      className="min-w-[60px] p-0 w-full rounded-[24px]"
+                                                      onClick={
+                                                        handlerSubmitFollow
+                                                      }
+                                                    >
+                                                      <div className="min-w-[60px] justify-center items-center flex min-h-[48px] px-4 py-3 w-full cursor-pointer bg-customColor-color_background_box_secondary rounded-[24px]">
+                                                        <div className="text-black text-center font-semibold iFc text-[16px]">
+                                                          Theo dõi
+                                                        </div>
                                                       </div>
-                                                    </div>
-                                                  </button>
-                                                </div>
+                                                    </button>
+                                                  </div>
+                                                ) : (
+                                                  <div className="flex flex-row relative">
+                                                    <button
+                                                      className="min-w-[60px] p-0 w-full rounded-[24px]"
+                                                      onClick={
+                                                        handlerSubmitUnFollow
+                                                      }
+                                                    >
+                                                      <div className="min-w-[60px] justify-center items-center flex min-h-[48px] px-4 py-3 w-full cursor-pointer bg-black rounded-[24px]">
+                                                        <div className="text-white text-center font-semibold iFc text-[16px]">
+                                                          Người đang theo dõi
+                                                        </div>
+                                                      </div>
+                                                    </button>
+                                                  </div>
+                                                )}
                                               </div>
                                             </div>
                                           </div>
@@ -283,32 +453,7 @@ const PostId = () => {
                                 <div className="mx-0">
                                   <div className="px-8 py-2 bg-white cursor-auto">
                                     <div className="flex flex-col m-0">
-                                      <div className="h-[44px] justify-between items-center mt-1 mb-3 flex flex-row">
-                                        <h3 className="text-left break-words font-semibold iFc text-[20px]">
-                                          Bạn nghĩ gì?
-                                        </h3>
-                                        <div className="items-center flex flex-row">
-                                          <div className="mx-[6px]">
-                                            <div className="items-center box-border flex flex-row">
-                                              <div className="flex flex-row mr-[2px]">
-                                                <div className="bg-image-heart"></div>
-                                              </div>
-                                              <div className="text-left break-words font-semibold iFc text-[16px]">
-                                                6
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="mx-[6px] my-0">
-                                            <div className="rounded-[50%] w-full cursor-pointer">
-                                              <div className=" rounded-[50%] bg-customColor-color_background_box_secondary">
-                                                <div className="min-h-[48px] min-w-[48px] justify-center items-center flex flex-row m-0">
-                                                  <div className="bg-image-heart-no-color"></div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                      <ReactComponent />
                                       {/* user comment */}
                                       <div className="mb-3 mt-0">
                                         <div className="flex flex-row justify-center m-0">
@@ -316,37 +461,80 @@ const PostId = () => {
                                             <div className="h-[48px] w-[48px] rounded-[50%] relative">
                                               <div className=" rounded-[50%] relative">
                                                 <img
-                                                  src="https://i.pinimg.com/75x75_RS/e6/19/cd/e619cdbcb84f93bf02fcbf2ad05f8c85.jpg"
+                                                  src={
+                                                    session?.user?.image ||
+                                                    "/icons8-cat-64.png"
+                                                  }
                                                   alt=""
                                                   className="rounded-[50%] w-full"
                                                 />
                                               </div>
                                             </div>
                                           </div>
-                                          <div className="rounded-[24px] bg-customColor-color_background_box_secondary flex flex-auto">
+                                          <div className=" focus-within:bg-white bg-customColor-color_background_button_secondary_default rounded-[24px] border-solid border-customColor-color_gray_roboflow_200 border-[2px] flex flex-auto">
                                             <div className="rounded-none w-full cursor-pointer">
                                               <div className=" justify-center flex flex-row h-full">
                                                 <div className="min-h-[48px] flex-auto justify-between flex flex-row">
-                                                  <div className="py-[15px] cursor-pointer mx-4 flex-auto flex flex-col">
-                                                    <div className="box-border">
-                                                      {/* click */}
-                                                      <div className="left-0 text-left text-customColor-9197 w-full z-0">
-                                                        <div className="text-left iFc font-semibold">
-                                                          Thêm nhận xét
-                                                        </div>
-                                                      </div>
-                                                      {/* comment */}
-                                                      {/* <div className="relative">
-                                                        <div className=""></div>
-                                                      </div> */}
+                                                  <div className="py-[15px] pl-[1px] cursor-pointer mx-4 flex-auto flex flex-col">
+                                                    <div className=" box-border block cursor-pointer">
+                                                      <input
+                                                        type="text"
+                                                        placeholder="Thêm nhận xét"
+                                                        className="outline-none bg-customColor-color_background_button_secondary_default focus:bg-white w-full"
+                                                        value={commentValue}
+                                                        onChange={(e) =>
+                                                          setCommentValue(
+                                                            e.target.value
+                                                          )
+                                                        }
+                                                      />
                                                     </div>
                                                   </div>
-                                                  {/* icon */}
                                                   <div className="py-[6px] pr-[6px] justify-center items-center flex flex-row cursor-pointer">
                                                     <div className="rounded-[50%] justify-center box-border flex flex-row">
-                                                      <div className="text-[24px] h-[40px] w-[40px] justify-center items-center flex flex-row">
+                                                      <div className="absolute top-[-380px]">
+                                                        {emojiPicker && (
+                                                          <EmojiPicker
+                                                            className=" relative"
+                                                            onEmojiClick={
+                                                              handleEmojiClick
+                                                            }
+                                                          />
+                                                        )}
+                                                      </div>
+                                                      <div
+                                                        className="text-[24px] h-[40px] w-[40px] justify-center items-center flex flex-row"
+                                                        onClick={() =>
+                                                          setEmojiPicker(
+                                                            (prev) => !prev
+                                                          )
+                                                        }
+                                                      >
                                                         😃
                                                       </div>
+                                                      {commentValue && (
+                                                        <div className="m-[2px] cursor-pointer">
+                                                          <button
+                                                            className="p-0"
+                                                            type="button"
+                                                            onClick={
+                                                              handlerSubmit
+                                                            }
+                                                          >
+                                                            <div className="w-[40px] h-[40px] rounded-[50%] justify-center items-center flex bg-customColor-color_red_pushpin_450">
+                                                              <svg
+                                                                className="h-[18px] w-[18px] text-white fill-white"
+                                                                viewBox="0 0 24 24"
+                                                                aria-hidden="true"
+                                                                aria-label=""
+                                                                role="img"
+                                                              >
+                                                                <path d="m.46 2.43-.03.03c-.4.42-.58 1.06-.28 1.68L3 10.5 16 12 3 13.5.15 19.86c-.3.62-.13 1.26.27 1.67l.05.05c.4.38 1 .56 1.62.3l20.99-8.5q.28-.12.47-.3l.04-.04c.68-.71.51-2-.51-2.42L2.09 2.12Q1.79 2 1.49 2q-.61.01-1.03.43"></path>
+                                                              </svg>
+                                                            </div>
+                                                          </button>
+                                                        </div>
+                                                      )}
                                                     </div>
                                                   </div>
                                                 </div>
@@ -377,10 +565,3 @@ const PostId = () => {
 };
 
 export default PostId;
-{
-  /* <img
-  src="https://th.bing.com/th/id/R.e1707c345d5ac10c80a674030e606643?rik=pOsTg5KBoLuNvw&riu=http%3a%2f%2fwww.snut.fr%2fwp-content%2fuploads%2f2015%2f08%2fimage-de-paysage.jpg&ehk=1O5SWKkGpZ8yU%2b%2fAnLXG1v8k6BKxgyiXgHbOWBW1ir0%3d&risl=1&pid=ImgRaw&r=0"
-  alt=""
-  className=" absolute w-full h-auto"
-/>; */
-}

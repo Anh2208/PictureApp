@@ -17,6 +17,9 @@ const config: Config = {
           "75%": { transform: "translateY(12px) scale(1)" },
         },
       },
+      boxShadow: {
+        custom: "rgba(0, 0, 0, 0.4) 0px 9px 26px",
+      },
       animation: {
         chase: "chase 2s linear infinite",
       },

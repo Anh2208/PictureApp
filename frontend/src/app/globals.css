@@ -48,17 +48,92 @@
     }
   }
 
+  @keyframes icon-display {
+    0% {
+      transform: translateY(15px);
+    }
 
-  /* animation */
-  .bouncing-arrow {
-    animation: bouncing-arrow 2s ease-in-out infinite;
+    100% {
+      transform: translateY(0);
+    }
   }
 
-  /* css */
-  .font-default {
-    font-family: var(--font-family-default-latin);
+  @keyframes moveX {
+    to {
+      background-position: right;
+      /* you only need to move to right */
+    }
   }
+
+  .emoji {
+    /* display: inline-block; */
+    aspect-ratio: 1;
+    background-size: auto 100%;
+    /* animation: moveX 2s infinite; */
+  }
+
 }
+
+/* animation start */
+/* animation */
+.bouncing-arrow {
+  animation: bouncing-arrow 2s ease-in-out infinite;
+}
+
+.icon-animation-display {
+  animation: icon-display 0.25s ease-in;
+}
+
+.icon-animation-text {
+  transition: transform 0.2s ease-out 0s;
+  transform: scale(0.625);
+  transform-origin: center bottom;
+  white-space: nowrap;
+  height: 20px;
+}
+
+/* css */
+.font-default {
+  font-family: var(--font-family-default-latin);
+}
+
+.animation-steps-steps\(90\):hover {
+  animation: moveX 2s steps(90) infinite;
+}
+
+.animation-steps-steps\(60\):hover {
+  animation: moveX 2s steps(60) infinite;
+}
+
+.my-transition-icon {
+  transition-delay: 0s;
+  opacity: 1;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  transition-property: transform, opacity;
+  transform: scaleX(1) scaleY(1);
+  transform-origin: center bottom;
+  max-height: 40px;
+  max-width: 40px;
+}
+
+.my-transition-icon:hover {
+  transform: translateY(-30px) scaleX(1.6) scaleY(1.6);
+  transform-origin: center bottom;
+  transition: transform 0.2s ease-out 0s;
+  position: relative;
+  z-index: 1;
+}
+
+.my-transition-text {
+  transition: transform 0.2s ease-out 0s;
+  transform: scale(0.625);
+  transform-origin: center bottom;
+  white-space: nowrap;
+  height: 20px;
+}
+
+/* animation end */
 
 .Il7 {
   background-color: var(--color-background-primary-base);
@@ -70,6 +145,12 @@
 
 .sOY {
   color: var(--color-text-error);
+}
+
+.S9z {
+  transition-property: transform;
+  transition-duration: 85ms;
+  transition-timing-function: ease-out;
 }
 
 .iFc {
@@ -164,3 +245,36 @@
   height: 24px;
   width: 24px;
 }
+
+/* page post/[id]  start*/
+.DraftEditor-editorContainer,
+.DraftEditor-root,
+.public-DraftEditor-content {
+  height: inherit;
+  text-align: initial;
+}
+
+.public-DraftEditor-content {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+.DraftEditor-root {
+  position: relative;
+}
+
+.DraftEditor-editorContainer {
+  background-color: rgba(255, 255, 255, 0);
+  border-left: 0.1px solid transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.public-DraftEditor-block {
+  position: relative;
+}
+
+.DraftEditor-alignLeft .public-DraftStyleDefault-block {
+  text-align: left;
+}
+
+/* page post/[id] end*/
