@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "nodemon server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "cross-env NODE_ENV=production nodemon server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -17,28 +17,32 @@
     "cloudinary": "^2.0.3",
     "cloudinary-react": "^1.8.1",
     "countries-list": "^3.1.0",
+    "cross-env": "^7.0.3",
+    "express": "^4.19.2",
     "framer-motion": "^11.0.8",
     "googleapis": "^134.0.0",
     "next": "14.1.1",
     "next-auth": "^4.24.7",
-    "prisma": "^5.11.0",
     "react": "^18",
     "react-datepicker": "^6.2.0",
     "react-dom": "^18",
     "react-icons": "^5.0.1",
     "react-router-dom": "^6.22.3",
     "react-select": "^5.8.0",
-    "react-toastify": "^10.0.5"
+    "react-toastify": "^10.0.5",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
     "@iconify/tailwind": "^0.1.4",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
-    "@types/react": "^18",
+    "@types/react": "^18.2.75",
     "@types/react-datepicker": "^6.0.3",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
+    "prisma": "^5.12.1",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }

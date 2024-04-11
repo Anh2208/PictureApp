@@ -7,6 +7,7 @@ import Login from "./login";
 import Register from "./register";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import detailsMessages from "./detailsMessages";
 
 const UserLinks = () => {
   const [showRegister, setShowRegister] = useState(false);
@@ -43,10 +44,11 @@ const UserLinks = () => {
 
   return (
     <>
+      {showMessage == true && <Message onClose={() => setShowMessage(false)} />}
       {status === "authenticated" ? (
         <div className="items-center flex flex-row">
           <div className="relative block">
-            <div className="h-[48px] w-[48px] rounded-[50%] justify-center items-center flex flex-row cursor-pointer">
+            <div className="h-[48px] w-[48px] rounded-[50%] justify-center items-center flex flex-row cursor-pointer hover:bg-gray-200">
               <Image
                 src="/notification.svg"
                 alt=""
@@ -77,33 +79,23 @@ const UserLinks = () => {
               )}
             </div>
           </div>
-          <div className="block relative">
-            <div
-              className="rounded-[50%] w-full cursor-pointer"
-              onClick={() => setShowMessage((prev) => !prev)}
-            >
-              <div className="h-[48px] w-[48px] rounded-[50%] flex flex-row justify-center items-center">
-                {showMessage == false ? (
-                  <div className="relative">
-                    <img
-                      src="/icons8-message-100.png"
-                      alt="message"
-                      className="h-[24px] w-[24px] rounded-[50%] "
-                    />
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <img
-                      src="/icons8-chat-bubble-100.png"
-                      alt="message"
-                      className="h-[24px] w-[24px] rounded-[50%] "
-                    />
-                    <Message />
-                  </div>
-                )}
-              </div>
+          <div
+            onClick={() => setShowMessage((prev) => !prev)}
+            className="block relative p-3 hover:bg-gray-200 rounded-full"
+          >
+            <div className="rounded-[50%] w-full cursor-pointer">
+              <img
+                src={`${
+                  showMessage
+                    ? "/icons8-chat-bubble-100.png"
+                    : "/icons8-message-100.png"
+                } `}
+                alt="message"
+                className="h-[24px] w-[24px] rounded-[50%] flex flex-row justify-center items-center"
+              />
             </div>
           </div>
+
           {/* user */}
           <div className="block">
             <div className="rounded-[50%] w-full cursor-pointer">

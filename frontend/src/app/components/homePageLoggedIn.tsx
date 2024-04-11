@@ -41,8 +41,6 @@ const HomePageLoggedIn = () => {
     fetchData();
   }, []);
 
-  console.log("post data is", postData);
-
   return (
     <>
       <div className="pt-[80px] box-border block">
