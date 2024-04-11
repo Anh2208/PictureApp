@@ -59,6 +59,18 @@ model User {
   sessions      Session[]
   posts         Post[]
   messages      Message[]
+  comments Comment[] @relation("UserComments")
+  followers Follows[] @relation("follower")
+  following  Follows[] @relation("following")
+}
+
+model Follows {
+  follower    User @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@id([followerId, followingId])
 }
 
 model Post {
@@ -76,9 +88,16 @@ model Post {
 }
 
 model Comment {
-  id   String @id @default(cuid())
-  Post Post?  @relation(fields: [id], references: [id])
-  text String
+  id String @id @default(cuid())
+  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  content String
+  createdAt  DateTime   @default(now())
+  parent Comment? @relation("ChildComments", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId String?
+  children Comment[] @relation("ChildComments")
+  creator User? @relation("UserComments", fields: [creatorId], references: [id])
+  creatorId String?
 }
 
 model Message {

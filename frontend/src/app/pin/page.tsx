@@ -22,7 +22,7 @@ const getData = async (): Promise<PostData[]> => {
   return res.json();
 };
 
-const HomePageLoggedIn = () => {
+const Pin = () => {
   const [postData, setPostData] = useState<PostData[] | undefined>(undefined);
 
   useEffect(() => {
@@ -84,6 +84,4 @@ const HomePageLoggedIn = () => {
   );
 };
 
-export default HomePageLoggedIn;
-
-// export default HomePageLoggedIn;
+export default Pin;

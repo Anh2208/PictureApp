@@ -19,6 +19,7 @@
     "countries-list": "^3.1.0",
     "cross-env": "^7.0.3",
     "express": "^4.19.2",
+    "emoji-picker-react": "^4.9.2",
     "framer-motion": "^11.0.8",
     "googleapis": "^134.0.0",
     "next": "14.1.1",
