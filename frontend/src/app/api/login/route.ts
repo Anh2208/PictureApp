@@ -4,7 +4,6 @@ import bcrypt, { compare } from "bcrypt";
 import { signIn } from "next-auth/react";
 
 export const POST = async (req: NextRequest, res: NextResponse) => {
-  console.log("kkkk");
   try {
     const body = await req.json();
     const { email, password } = body;

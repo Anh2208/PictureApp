@@ -29,7 +29,6 @@ export const GET = async (
 
     return new NextResponse(JSON.stringify(user), { status: 200 });
   } catch (error) {
-    console.log(error);
     return new NextResponse(
       JSON.stringify({ message: "Something went wrong!" }),
       { status: 500 }
@@ -71,7 +70,6 @@ export const PUT = async (
         }
       }
       if (body.password && body.oldpassword && user.password) {
-        console.log(user.password, body.password);
         const result = await changePassword(
           user.email,
           user.password,
@@ -96,7 +94,6 @@ export const PUT = async (
       user.website != null &&
       body.website != null
     ) {
-      console.log(" result is", !validWebsiteRegex.test(body.website));
       return new NextResponse(
         JSON.stringify({ message: "The website link is incorrect" }),
         { status: 500 }
@@ -112,7 +109,6 @@ export const PUT = async (
     }
     return new NextResponse(JSON.stringify(userUpdate), { status: 200 });
   } catch (error) {
-    console.log(error);
     return new NextResponse(
       JSON.stringify({ message: "There was a problem updating users" }),
       { status: 500 }
@@ -149,7 +145,6 @@ const changePassword = async (
         compareResult = false;
       }
     });
-    console.log(compareResult);
     if (!compareResult) {
       // Mật khẩu cũ không khớp
       return false;

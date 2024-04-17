@@ -33,15 +33,6 @@ const UserLinks = () => {
   const email = session?.user?.email || "underfine";
   const username = email.split("@")[0];
 
-  // const LogOut: MouseEventHandler<HTMLDivElement> = async () => {
-  //   try {
-  //     signOut();
-  //     router.push("/");
-  //   } catch (error) {
-  //     console.log("Somthing went wrong!!!");
-  //   }
-  // };
-
   return (
     <>
       {showMessage == true && <Message onClose={() => setShowMessage(false)} />}

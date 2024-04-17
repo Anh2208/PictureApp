@@ -144,6 +144,7 @@ const CreatePage = () => {
       console.log(err);
     }
   };
+
   return (
     <div className="pt-[80px]">
       <form onSubmit={handleSubmit}>
@@ -240,7 +241,7 @@ const CreatePage = () => {
                                               loading="lazy"
                                               className="object-cover bg-transparent absolute w-full h-full border-0 max-w-full align-middle"
                                               src={URL.createObjectURL(file)}
-                                              alt=""
+                                              alt="img_post"
                                             />
                                           )}
                                         </div>
@@ -367,7 +368,7 @@ const CreatePage = () => {
                             }  w-[375px] pb-[16px] flex items-center relative bg-[#fff] flex-row`}
                           >
                             <div className="h-full w-full justify-center items-center mb-[16px] mt-[16px] pl-0 pr-0 flex flex-col">
-                              <div className="rounded-[32px] h-full w-full border-[2px] relative overflow-hidden bg-[#e9e9e9]">
+                              <div className="rounded-[32px] h-full w-full border-[2px] relative bg-[#e9e9e9]">
                                 <div className="h-full rounded-[32px] relative">
                                   {file ? (
                                     <>
@@ -381,9 +382,9 @@ const CreatePage = () => {
                                         <img
                                           fetchPriority="auto"
                                           loading="lazy"
-                                          className="object-cover bg-transparent absolute w-full h-full border-0 max-w-full align-middle"
+                                          className="bg-transparent absolute w-full rounded-[24px] border-0 align-middle"
                                           src={URL.createObjectURL(file)}
-                                          alt=""
+                                          alt="img_post"
                                         />
                                       )}
                                     </>

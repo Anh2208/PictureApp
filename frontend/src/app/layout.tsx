@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <QueryProvider>
-            <div className="w-full h-screen">
+            <div className="w-screen h-screen">
               <div className="h-20 z-50 fixed top-0 w-full bg-white">
                 <Navbar />
               </div>
