@@ -61,14 +61,18 @@ const CreatePage = () => {
   };
   const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
-  const router = useRouter();
-
   const [file, setFile] = useState<File | null>();
+  const [type, setType] = useState("");
 
   const handleChangeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     const item = (target.files as FileList)[0];
     setFile(item);
+    if (item) {
+      setType(item.name.substring(item.name.lastIndexOf(".") + 1));
+    } else {
+      setType("");
+    }
   };
 
   const [user, setUser] = useState<User | null>();
@@ -140,7 +144,6 @@ const CreatePage = () => {
       console.log(err);
     }
   };
-
   return (
     <div className="pt-[80px]">
       <form onSubmit={handleSubmit}>
@@ -226,13 +229,20 @@ const CreatePage = () => {
                                     <div className="inline-block h-[72px] w-[72px] origin-center cursor-pointer">
                                       <div className="h-full left-0 right-0 w-full absolute overflow-hidden cursor-pointer">
                                         <div className="h-full relative bg-transparent">
-                                          <img
-                                            fetchPriority="auto"
-                                            loading="lazy"
-                                            className="object-cover bg-transparent absolute w-full h-full border-0 max-w-full align-middle"
-                                            src={URL.createObjectURL(file)}
-                                            alt=""
-                                          />
+                                          {type == "mp4" ? (
+                                            <video
+                                              src={URL.createObjectURL(file)}
+                                              muted
+                                            />
+                                          ) : (
+                                            <img
+                                              fetchPriority="auto"
+                                              loading="lazy"
+                                              className="object-cover bg-transparent absolute w-full h-full border-0 max-w-full align-middle"
+                                              src={URL.createObjectURL(file)}
+                                              alt=""
+                                            />
+                                          )}
                                         </div>
                                       </div>
                                     </div>
@@ -360,11 +370,23 @@ const CreatePage = () => {
                               <div className="rounded-[32px] h-full w-full border-[2px] relative overflow-hidden bg-[#e9e9e9]">
                                 <div className="h-full rounded-[32px] relative">
                                   {file ? (
-                                    <img
-                                      className="w-[375px] h-auto bg-no-repeat left-0 top-0 origin-center"
-                                      src={URL.createObjectURL(file)}
-                                      alt=""
-                                    />
+                                    <>
+                                      {type == "mp4" ? (
+                                        <video
+                                          src={URL.createObjectURL(file)}
+                                          muted
+                                          controls
+                                        />
+                                      ) : (
+                                        <img
+                                          fetchPriority="auto"
+                                          loading="lazy"
+                                          className="object-cover bg-transparent absolute w-full h-full border-0 max-w-full align-middle"
+                                          src={URL.createObjectURL(file)}
+                                          alt=""
+                                        />
+                                      )}
+                                    </>
                                   ) : (
                                     <div className="h-full w-full m-0">
                                       <div className="h-full w-full m-0 justify-center items-center relative flex flex-col bg-[#e9e9e9]">

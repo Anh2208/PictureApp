@@ -59,9 +59,10 @@ model User {
   sessions      Session[]
   posts         Post[]
   messages      Message[]
-  comments Comment[] @relation("UserComments")
+  reactPosts    ReactPost[]
   followers Follows[] @relation("follower")
   following  Follows[] @relation("following")
+  likedComments Like[]
 }
 
 model Follows {
@@ -84,7 +85,24 @@ model Post {
   board        String
   tagged_topic String
   comments     Comment[]
-  reacts       String?
+  reactPosts   ReactPost[]
+}
+
+model ReactPost {
+  id           String  @id @default(cuid())
+  post         Post    @relation(fields: [postId], references: [id])
+  postId       String
+  react        React @relation(fields: [reactId], references: [id])
+  reactId      String
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String
+  number       Int @default(0)
+}
+
+model React {
+  id           String    @id @default(cuid())
+  imageURL     String
+  reactPosts ReactPost[]
 }
 
 model Comment {
@@ -96,8 +114,21 @@ model Comment {
   parent Comment? @relation("ChildComments", fields: [parentId], references: [id], onDelete: Cascade)
   parentId String?
   children Comment[] @relation("ChildComments")
-  creator User? @relation("UserComments", fields: [creatorId], references: [id])
-  creatorId String?
+  creatorUrl String?
+  creatorImage String?
+  creatorUserName String?
+  likeCount      Int        @default(0)
+  likes          Like[]
+}
+
+model Like {
+  id      String  @id @default(cuid())
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String
+  comment Comment @relation(fields: [commentId], references: [id])
+  commentId String
+
+  @@index([userId, commentId], name: "unique_like")
 }
 
 model Message {

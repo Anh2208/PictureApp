@@ -8,3 +8,21 @@ export type User = {
   gender: string;
   followers: number;
 };
+
+export interface Comment {
+  id: string;
+  content: string;
+  creatorImage: string;
+  creatorUrl: string;
+  creatorUserName: string;
+  postId: string;
+  createdAt: Date;
+}
+
+export interface ReactPost {
+  id: String;
+  number: Number;
+  postId: String;
+  reactId: String;
+  userId: String;
+}

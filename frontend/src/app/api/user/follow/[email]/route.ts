@@ -8,7 +8,6 @@ export const GET = async (
   const { email } = params;
 
   try {
-    console.log("1111111112", email);
     const user = await prisma.user.findUnique({
       where: {
         email: email,
@@ -30,9 +29,9 @@ export const GET = async (
         followerId: user.id,
       },
     });
-    if (follow) {
-      console.log("kkkkkkk", follow);
-    }
+    // if (follow) {
+    //   console.log("kkkkkkk", follow);
+    // }
 
     return new NextResponse(JSON.stringify(follow), {
       status: 200,

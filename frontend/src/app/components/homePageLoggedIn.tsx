@@ -61,11 +61,23 @@ const HomePageLoggedIn = () => {
                             <div className="min-h-[55px]">
                               <div className="min-h-[120px] items-center flex flex-row m-0 cursor-zoom-in">
                                 <div className="relative cursor-zoom-in">
-                                  <img
-                                    src={post.images}
-                                    alt={post.title}
-                                    className=" w-full cursor-zoom-in rounded-[16px]"
-                                  />
+                                  {post.images.substring(
+                                    post.images.lastIndexOf(".") + 1
+                                  ) != "mp4" ? (
+                                    <img
+                                      src={post.images}
+                                      alt={post.title}
+                                      className=" w-full cursor-zoom-in rounded-[16px]"
+                                    />
+                                  ) : (
+                                    <video
+                                      src={post.images}
+                                      autoPlay
+                                      className="autoplay"
+                                      muted
+                                      loop
+                                    />
+                                  )}
                                 </div>
                               </div>
                             </div>

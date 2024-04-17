@@ -10,14 +10,19 @@ export const POST = async (req: NextRequest) => {
         email: body.emailUser,
       },
       select: {
-        id: true,
+        username: true,
+        image: true,
       },
     });
+    console.log(user?.username);
     const comment = await prisma.comment.create({
       data: {
         postId: body.postId,
         content: body.content,
-        creatorId: user?.id,
+        creatorUrl: `http://localhost:3000/${user?.username}`,
+        parentId: body.parentId,
+        creatorImage: user?.image,
+        creatorUserName: user?.username,
       },
     });
     return NextResponse.json(
@@ -26,6 +31,13 @@ export const POST = async (req: NextRequest) => {
     );
   } catch (error) {
     console.error("Error:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+};
+
+export const GET = async (req: NextRequest) => {
+  try {
+  } catch (error) {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };

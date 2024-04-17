@@ -48,6 +48,12 @@
     }
   }
 
+  @keyframes l38 {
+    100% {
+      background-position: 100% 0, 100% 100%, 0 100%, 0 0
+    }
+  }
+
   @keyframes icon-display {
     0% {
       transform: translateY(15px);
@@ -78,6 +84,20 @@
 /* animation */
 .bouncing-arrow {
   animation: bouncing-arrow 2s ease-in-out infinite;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader_dots_animation {
+  width: 35px;
+  aspect-ratio: 1;
+  --_g: no-repeat radial-gradient(farthest-side, #000 94%, #0000);
+  background:
+    var(--_g) 0 0,
+    var(--_g) 100% 0,
+    var(--_g) 100% 100%,
+    var(--_g) 0 100%;
+  background-size: 40% 40%;
+  animation: l38 .5s infinite;
 }
 
 .icon-animation-display {
@@ -231,7 +251,6 @@
 }
 
 .bg-image-heart {
-  background-image: url(https://s.pinimg.com/webapp/loveGrid-1ec7b8e4.svg);
   background-repeat: no-repeat;
   background-size: cover;
   height: 19px;
@@ -239,7 +258,7 @@
 }
 
 .bg-image-heart-no-color {
-  background-image: url(https://s.pinimg.com/webapp/reactionHeartOutline-24ab75a6.svg);
+  /* background-image: url(https://s.pinimg.com/webapp/reactionHeartOutline-24ab75a6.svg); */
   background-repeat: no-repeat;
   background-size: cover;
   height: 24px;

@@ -1,7 +1,21 @@
 "use client";
 
 import { url } from "inspector";
-import { useRef, useState } from "react";
+import { useSession } from "next-auth/react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
+
+interface Post {
+  id: String;
+  reactCount: number;
+}
+
+interface ReactList {
+  id: String;
+  number: number;
+  postId: String;
+  reactId: String;
+  userId: String;
+}
 
 const icons = [
   {
@@ -45,10 +59,24 @@ const icons = [
     delay: "8s",
   },
 ];
-
-const React = () => {
+const React = ({
+  id,
+  reactCount,
+  reactList,
+  onCountUpdate,
+}: Post & {
+  reactList: ReactList[];
+  onCountUpdate: () => void;
+}) => {
   const [showIconPicker, setShowIconPicker] = useState(false);
+  const [reactByUser, setReactByUser] = useState("");
   const timeoutId = useRef<any | null>(null);
+  const { data: session } = useSession();
+  const [loveReact, setLoveReact] = useState(false);
+  const [ideaReact, setIdeaReact] = useState(false);
+  const [thankReact, setThankReact] = useState(false);
+  const [hahaReact, setHahaReact] = useState(false);
+  const [wowReact, setWowReact] = useState(false);
 
   const handleHoverHeart = () => {
     // Xóa setTimeout trước đó nếu có
@@ -69,6 +97,101 @@ const React = () => {
     }, 250);
   };
 
+  const submitHandle: (
+    e: React.MouseEvent<HTMLDivElement>,
+    iconId: number,
+    iconUrlStatic: string
+  ) => Promise<void> = async (e, iconId, iconUrlStatic) => {
+    e.preventDefault();
+    try {
+      await fetch(`http://localhost:3000/api/post/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          iconId: iconId,
+          userId: session?.user.id,
+          postId: id,
+        }),
+      });
+      setReactByUser(iconId.toString());
+      onCountUpdate();
+    } catch (error) {
+      console.log("error is", error);
+    }
+  };
+
+  const submitHandleRemoveReact: (
+    e: React.MouseEvent<HTMLDivElement>,
+    iconId: string
+  ) => Promise<void> = async (e, iconId) => {
+    e.preventDefault();
+    try {
+      if (reactByUser !== "") {
+        await fetch(`http://localhost:3000/api/post/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            isDelete: true,
+            iconId: parseInt(iconId),
+            userId: session?.user.id,
+            postId: id,
+          }),
+        });
+        onCountUpdate();
+        setReactByUser("");
+      } else {
+        await fetch(`http://localhost:3000/api/post/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            iconId: 2,
+            userId: session?.user.id,
+            postId: id,
+          }),
+        });
+        onCountUpdate();
+      }
+    } catch (error) {
+      console.log("error is", error);
+    }
+  };
+
+  useEffect(() => {
+    setIdeaReact(false);
+    setLoveReact(false);
+    setThankReact(false);
+    setHahaReact(false);
+    setWowReact(false);
+    if (reactList) {
+      reactList.forEach((item) => {
+        if (item.reactId === "1") {
+          setIdeaReact(true);
+        }
+        if (item.reactId === "2") {
+          setLoveReact(true);
+        }
+        if (item.reactId === "3") {
+          setThankReact(true);
+        }
+        if (item.reactId === "4") {
+          setHahaReact(true);
+        }
+        if (item.reactId === "5") {
+          setWowReact(true);
+        }
+        if (item.userId == session?.user.id) {
+          // setIsReact(true);
+          setReactByUser(item.reactId.toString());
+        }
+      });
+    }
+  }, [reactCount, reactList]);
   return (
     <>
       <div className="h-[44px] justify-between items-center mt-1 mb-3 flex flex-row">
@@ -78,24 +201,127 @@ const React = () => {
         <div className="items-center flex flex-row">
           <div className="mx-[6px]">
             <div className="items-center box-border flex flex-row">
-              <div className="flex flex-row mr-[2px]">
-                <div className="bg-image-heart"></div>
-              </div>
+              {ideaReact && (
+                <div className="flex flex-row mr-[2px]">
+                  <div
+                    className="bg-image-heart"
+                    style={{
+                      backgroundImage:
+                        'url("https://s.pinimg.com/webapp/goodIdeaStatic-855554b0.svg")',
+                    }}
+                  ></div>
+                </div>
+              )}
+              {loveReact && (
+                <div className="flex flex-row mr-[2px]">
+                  <div
+                    className="bg-image-heart"
+                    style={{
+                      backgroundImage:
+                        'url("https://s.pinimg.com/webapp/loveStatic-31fc2a99.svg")',
+                    }}
+                  ></div>
+                </div>
+              )}
+              {thankReact && (
+                <div className="flex flex-row mr-[2px]">
+                  <div
+                    className="bg-image-heart"
+                    style={{
+                      backgroundImage:
+                        'url("https://s.pinimg.com/webapp/thanksStatic-51f19932.svg")',
+                    }}
+                  ></div>
+                </div>
+              )}
+              {wowReact && (
+                <div className="flex flex-row mr-[2px]">
+                  <div
+                    className="bg-image-heart"
+                    style={{
+                      backgroundImage:
+                        'url("https://s.pinimg.com/webapp/wowStatic-d966adbd.svg")',
+                    }}
+                  ></div>
+                </div>
+              )}
+              {hahaReact && (
+                <div className="flex flex-row mr-[2px]">
+                  <div
+                    className="bg-image-heart"
+                    style={{
+                      backgroundImage:
+                        'url("https://s.pinimg.com/webapp/hahaStatic-28ee6e1e.svg")',
+                    }}
+                  ></div>
+                </div>
+              )}
               <div className="text-left break-words font-semibold iFc text-[16px]">
-                6
+                {reactCount != 0 && reactCount.toString()}
               </div>
             </div>
           </div>
           <div className="mx-[6px] my-0">
             <div className="box-border relative">
-              <div className="rounded-[50%] w-full cursor-pointer">
+              <div
+                className="rounded-[50%] w-full cursor-pointer"
+                onClick={(e) => submitHandleRemoveReact(e, reactByUser)}
+              >
                 <div
                   className="rounded-[50%] bg-customColor-color_background_box_secondary"
                   onMouseEnter={handleHoverHeart}
                   onMouseLeave={handleLeaveHeart}
                 >
                   <div className="min-h-[48px] min-w-[48px] justify-center items-center flex flex-row m-0">
-                    <div className="bg-image-heart-no-color"></div>
+                    {reactByUser == "" ? (
+                      <div
+                        className="bg-image-heart-no-color"
+                        style={{
+                          backgroundImage:
+                            'url("https://s.pinimg.com/webapp/reactionHeartOutline-24ab75a6.svg")',
+                        }}
+                      ></div>
+                    ) : reactByUser == "1" ? (
+                      <div
+                        className="bg-image-heart-no-color"
+                        style={{
+                          backgroundImage:
+                            'url("https://s.pinimg.com/webapp/goodIdeaStatic-855554b0.svg")',
+                        }}
+                      ></div>
+                    ) : reactByUser == "2" ? (
+                      <div
+                        className="bg-image-heart-no-color"
+                        style={{
+                          backgroundImage:
+                            'url("https://s.pinimg.com/webapp/loveStatic-31fc2a99.svg")',
+                        }}
+                      ></div>
+                    ) : reactByUser == "3" ? (
+                      <div
+                        className="bg-image-heart-no-color"
+                        style={{
+                          backgroundImage:
+                            'url("https://s.pinimg.com/webapp/thanksStatic-51f19932.svg")',
+                        }}
+                      ></div>
+                    ) : reactByUser == "4" ? (
+                      <div
+                        className="bg-image-heart-no-color"
+                        style={{
+                          backgroundImage:
+                            'url("https://s.pinimg.com/webapp/wowStatic-d966adbd.svg")',
+                        }}
+                      ></div>
+                    ) : (
+                      <div
+                        className="bg-image-heart-no-color"
+                        style={{
+                          backgroundImage:
+                            'url("https://s.pinimg.com/webapp/hahaStatic-28ee6e1e.svg")',
+                        }}
+                      ></div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -122,7 +348,12 @@ const React = () => {
                                 key={icon.id}
                               >
                                 <div className="my-transition-icon transition max-w-[40px] max-h-[40px] justify-center items-center relative flex flex-row cursor-pointer">
-                                  <div className="relative group justify-center items-center flex flex-col cursor-pointer">
+                                  <div
+                                    className="relative group justify-center items-center flex flex-col cursor-pointer"
+                                    onClick={(e) =>
+                                      submitHandle(e, icon.id, icon.urlStatic)
+                                    }
+                                  >
                                     <div className="icon-animation-text group-hover:flex hidden rounded-[999px] justify-center items-center px-2 py-1 bg-black text-white flex-row">
                                       <div className="text-left iFc text-[12px] items-center justify-center text-white font-semibold">
                                         {icon.text}

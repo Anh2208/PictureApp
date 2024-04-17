@@ -42,6 +42,9 @@ nextApp.prepare().then(() => {
   app.put("*", (req, res) => {
     return nextHandler(req, res);
   });
+  app.delete("*", (req, res) => {
+    return nextHandler(req, res);
+  });
 
   server.listen(port, (err) => {
     if (err) throw err;

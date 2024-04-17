@@ -26,7 +26,6 @@ export const GET = async (
         email: email,
       },
     });
-    console.log("lllll", user);
 
     return new NextResponse(JSON.stringify(user), { status: 200 });
   } catch (error) {
