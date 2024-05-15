@@ -10,7 +10,7 @@ Technology: NextJS, Docker, Prisma, socket.io,..
 5.  cd to frontend and run 'npm i'
 6. cd to docker folder, run 'docker compose up'
 7. cd to frontend and run 'npx prisma migrate dev' and enter a name for the new migration is 'picbu'
-8. at docker path, run 'docker compose down'
+8. cd to docker folder, run 'docker compose down'
 
 # Step
 1. open terminal, cd to docker folder and run 'docker compose up'
