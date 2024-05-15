@@ -1,4 +1,4 @@
-#Picture App
+# Picture App
 The website is built based on pinterest website, users can register and manage personal accounts, post and chat online.
 Technology: NextJS, Docker, Prisma, socket.io,..
 
